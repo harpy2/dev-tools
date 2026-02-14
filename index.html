@@ -563,6 +563,13 @@ gtag('config', 'G-JH96TVTP96');
         <input type="checkbox" id="http-insecure"> Skip SSL
       </label>
     </div>
+    <div id="http-history-section" style="margin:8px 0;">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
+        <span style="font-size:0.8em;color:var(--text2);cursor:pointer;" onclick="toggleHttpHistory()">📜 History <span id="http-history-count"></span></span>
+        <button class="btn-ghost" style="font-size:0.7em;padding:2px 8px;" onclick="clearHttpHistory()">🗑 Clear</button>
+      </div>
+      <div id="http-history-list" style="display:none;max-height:200px;overflow-y:auto;background:var(--surface);border:1px solid var(--border);border-radius:8px;"></div>
+    </div>
     <div id="http-status-bar" style="display:none;margin:12px 0;"></div>
     <div id="http-response" style="display:none;">
       <div class="tabs" style="border:none;background:transparent;margin-bottom:0;">
@@ -1280,6 +1287,8 @@ async function httpSend() {
     document.getElementById('http-resp-headers').innerHTML = headersHtml;
 
     resp.style.display = 'block';
+    // 히스토리 저장
+    saveHttpHistory({ method, url, headers, body, status: data.status, statusText: data.statusText, time: data.time, size: data.size, ts: Date.now() });
   } catch (e) {
     bar.innerHTML = `<span class="status status-err">❌ ${e.message}</span>`;
   } finally {
@@ -1287,6 +1296,60 @@ async function httpSend() {
     btn.disabled = false;
   }
 }
+
+// ===== HTTP History =====
+function getHttpHistory() {
+  try { return JSON.parse(localStorage.getItem('devtools-http-history') || '[]'); } catch { return []; }
+}
+function saveHttpHistory(entry) {
+  const hist = getHttpHistory();
+  hist.unshift(entry);
+  if (hist.length > 50) hist.length = 50;
+  localStorage.setItem('devtools-http-history', JSON.stringify(hist));
+  renderHttpHistory();
+}
+function renderHttpHistory() {
+  const hist = getHttpHistory();
+  const countEl = document.getElementById('http-history-count');
+  countEl.textContent = hist.length ? `(${hist.length})` : '';
+  const list = document.getElementById('http-history-list');
+  if (!hist.length) { list.innerHTML = '<div style="padding:12px;color:var(--text3);font-size:0.8em;">No history</div>'; return; }
+  list.innerHTML = hist.map((h, i) => {
+    const sc = h.status >= 200 && h.status < 300 ? 'var(--success)' : h.status >= 400 ? 'var(--error)' : 'var(--warn)';
+    const date = new Date(h.ts).toLocaleString('ko-KR', { timeZone: 'Asia/Seoul', month:'2-digit', day:'2-digit', hour:'2-digit', minute:'2-digit', hour12:false });
+    const methodColors = { GET:'#60a5fa', POST:'#4ade80', PUT:'#fbbf24', PATCH:'#c084fc', DELETE:'#f87171', HEAD:'#94a3b8', OPTIONS:'#94a3b8' };
+    return `<div style="padding:8px 12px;border-bottom:1px solid var(--border);cursor:pointer;font-size:0.8em;display:flex;align-items:center;gap:8px;" onclick="loadHttpHistory(${i})" title="${escHtml(h.url)}">
+      <span style="color:${methodColors[h.method]||'var(--text)'};font-weight:600;min-width:48px;">${h.method}</span>
+      <span style="color:${sc};min-width:28px;">${h.status}</span>
+      <span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--text2);">${escHtml(h.url)}</span>
+      <span style="color:var(--text3);font-size:0.85em;white-space:nowrap;">${date}</span>
+    </div>`;
+  }).join('');
+}
+function loadHttpHistory(idx) {
+  const hist = getHttpHistory();
+  const h = hist[idx];
+  if (!h) return;
+  document.getElementById('http-method').value = h.method || 'GET';
+  document.getElementById('http-url').value = h.url || '';
+  document.getElementById('http-headers').value = h.headers && Object.keys(h.headers).length ? JSON.stringify(h.headers, null, 2) : '';
+  document.getElementById('http-body').value = h.body || '';
+  document.getElementById('http-history-list').style.display = 'none';
+  toast('📜 Loaded');
+}
+function toggleHttpHistory() {
+  const list = document.getElementById('http-history-list');
+  list.style.display = list.style.display === 'none' ? 'block' : 'none';
+  if (list.style.display === 'block') renderHttpHistory();
+}
+function clearHttpHistory() {
+  localStorage.removeItem('devtools-http-history');
+  renderHttpHistory();
+  document.getElementById('http-history-list').style.display = 'none';
+  toast('🗑 History cleared');
+}
+// 초기 렌더
+renderHttpHistory();
 
 function httpTab(el, showId) {
   const tabs = el.parentElement.querySelectorAll('.tab');
