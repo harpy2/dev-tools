@@ -946,7 +946,7 @@ function convertTs() {
     if (isNaN(d.getTime())) { r.innerHTML = '<span class="status status-err">❌ Invalid timestamp</span>'; return; }
     const kst = d.toLocaleString('ko-KR', { timeZone: 'Asia/Seoul', year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false });
     r.innerHTML = `
-      <div><span class="lbl">Input</span>${input} (${isSec?'sec':'ms'})</div>
+      <div><span class="lbl">Input</span>${escHtml(input)} (${isSec?'sec':'ms'})</div>
       <div><span class="lbl">KST</span><strong>${kst}</strong></div>
       <div><span class="lbl">UTC</span>${d.toUTCString()}</div>
       <div><span class="lbl">ISO</span>${d.toISOString()}</div>
@@ -960,7 +960,7 @@ function convertTs() {
     if (isNaN(d.getTime())) { r.innerHTML = '<span class="status status-err">❌ Invalid date</span>'; return; }
     const kst = d.toLocaleString('ko-KR', { timeZone:'Asia/Seoul',year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false });
     r.innerHTML = `
-      <div><span class="lbl">Input</span>${input}</div>
+      <div><span class="lbl">Input</span>${escHtml(input)}</div>
       <div><span class="lbl">KST</span><strong>${kst}</strong></div>
       <div><span class="lbl">Sec</span><strong>${Math.floor(d.getTime()/1000)}</strong></div>
       <div><span class="lbl">Ms</span>${d.getTime()}</div>
@@ -1025,9 +1025,9 @@ function jwtDecode() {
     if (payload.exp) { const d = new Date(payload.exp*1000); payload._exp_readable = d.toLocaleString('ko-KR',{timeZone:'Asia/Seoul'}) + ' KST'; }
     r.innerHTML = `
       ${expInfo}
-      <div class="jwt-part"><h4 class="jwt-header">📋 Header</h4><div class="output">${JSON.stringify(header,null,2)}</div></div>
-      <div class="jwt-part"><h4 class="jwt-payload">📦 Payload</h4><div class="output">${JSON.stringify(payload,null,2)}</div></div>
-      <div class="jwt-part"><h4 class="jwt-sig">🔑 Signature</h4><div class="output" style="word-break:break-all">${parts[2]}</div></div>`;
+      <div class="jwt-part"><h4 class="jwt-header">📋 Header</h4><div class="output">${escHtml(JSON.stringify(header,null,2))}</div></div>
+      <div class="jwt-part"><h4 class="jwt-payload">📦 Payload</h4><div class="output">${escHtml(JSON.stringify(payload,null,2))}</div></div>
+      <div class="jwt-part"><h4 class="jwt-sig">🔑 Signature</h4><div class="output" style="word-break:break-all">${escHtml(parts[2])}</div></div>`;
   } catch (e) { r.innerHTML = '<span class="status status-err">❌ Decode failed: ' + e.message + '</span>'; }
 }
 
