@@ -1352,7 +1352,7 @@ async function redirectTrace() {
       html += `<div style="margin-top:6px;font-family:var(--mono);font-size:0.8em;word-break:break-all;color:var(--text);">${escHtml(hop.url)}</div>`;
 
       if (hop.location) {
-        html += `<div style="margin-top:4px;font-size:0.8em;color:var(--text2);">→ ${escHtml(hop.location)}</div>`;
+        html += `<div style="margin-top:4px;font-size:0.8em;color:var(--text2);word-break:break-all;">→ ${escHtml(hop.location)}</div>`;
       }
 
       // 주요 헤더 표시
@@ -1361,10 +1361,10 @@ async function redirectTrace() {
         const found = [];
         for (const h of interestingHeaders) {
           const val = hop.headers[h] || hop.headers[h.toLowerCase()];
-          if (val) found.push(`<span style="color:var(--accent)">${h}</span>: ${escHtml(String(val).substring(0, 100))}`);
+          if (val) found.push(`<span style="color:var(--accent)">${h}</span>: ${escHtml(String(val).substring(0, 200))}`);
         }
         if (found.length) {
-          html += `<div style="margin-top:6px;font-size:0.75em;color:var(--text2);line-height:1.8;">${found.join('<br>')}</div>`;
+          html += `<div style="margin-top:6px;font-size:0.75em;color:var(--text2);line-height:1.8;word-break:break-all;">${found.join('<br>')}</div>`;
         }
       }
 
