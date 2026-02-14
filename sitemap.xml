@@ -14,6 +14,7 @@
   <url><loc>https://tools.salmonholic.com/#http</loc><priority>0.7</priority><changefreq>monthly</changefreq></url>
   <url><loc>https://tools.salmonholic.com/#redirect</loc><priority>0.7</priority><changefreq>monthly</changefreq></url>
   <url><loc>https://tools.salmonholic.com/#percent</loc><priority>0.6</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://tools.salmonholic.com/#uuid</loc><priority>0.9</priority><changefreq>monthly</changefreq></url>
   <url><loc>https://tools.salmonholic.com/#diff</loc><priority>0.6</priority><changefreq>monthly</changefreq></url>
   <url><loc>https://tools.salmonholic.com/#lorem</loc><priority>0.5</priority><changefreq>monthly</changefreq></url>
 </urlset>

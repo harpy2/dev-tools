@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Dev Tools — Free Online Developer Toolkit</title>
 <meta name="description" content="Free online developer tools: JSON formatter & validator, Unix timestamp converter, URL encoder/decoder, Base64, JWT decoder, regex tester, SQL formatter, color converter, hash generator, HTTP client, redirect tracer, and more. No signup required.">
-<meta name="keywords" content="JSON formatter, JSON beautifier, timestamp converter, URL encoder, URL decoder, Base64 encoder, JWT decoder, regex tester, SQL formatter, color converter, hash generator, SHA256, HTTP client, redirect checker, developer tools, online tools, web tools, free tools">
+<meta name="keywords" content="JSON formatter, JSON beautifier, timestamp converter, URL encoder, URL decoder, Base64 encoder, JWT decoder, regex tester, SQL formatter, color converter, hash generator, SHA256, HTTP client, redirect checker, UUID generator, GAID generator, IDFA generator, advertising ID, developer tools, online tools, web tools, free tools">
 <meta name="author" content="Dev Tools">
 <meta name="robots" content="index, follow">
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9910139662531641" crossorigin="anonymous"></script>
@@ -44,7 +44,7 @@
   "applicationCategory": "DeveloperApplication",
   "operatingSystem": "Any",
   "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
-  "featureList": ["JSON Formatter", "Timestamp Converter", "URL Encoder/Decoder", "Base64 Encoder/Decoder", "JWT Decoder", "Regex Tester", "SQL Formatter", "Color Converter", "Hash Generator", "HTTP Client", "Redirect Tracer", "Text Diff", "Percent Calculator", "Escape/Unescape", "Lorem Generator", "Memo Pad"]
+  "featureList": ["JSON Formatter", "Timestamp Converter", "URL Encoder/Decoder", "Base64 Encoder/Decoder", "JWT Decoder", "Regex Tester", "SQL Formatter", "Color Converter", "Hash Generator", "HTTP Client", "Redirect Tracer", "Text Diff", "Percent Calculator", "Escape/Unescape", "UUID Generator", "GAID Generator", "IDFA Generator", "Lorem Generator", "Memo Pad"]
 }
 </script>
 <style>
@@ -350,6 +350,7 @@
       <div class="nav-group-label">General</div>
       <div class="tab active" data-tab="memo"><span class="icon">📝</span><span class="label">Memo</span></div>
       <div class="tab" data-tab="percent"><span class="icon">🔢</span><span class="label">Percent Calc</span></div>
+      <div class="tab" data-tab="uuid"><span class="icon">🆔</span><span class="label">UUID / ADID</span></div>
     </div>
     <div class="nav-group">
       <div class="nav-group-label">Format & Convert</div>
@@ -739,6 +740,32 @@
     <div class="output"><textarea id="lorem-output" readonly placeholder="Lorem ipsum..." style="min-height:200px;"></textarea></div>
   </div>
 
+  <!-- ===== UUID / ADID Generator ===== -->
+  <div class="panel" id="panel-uuid">
+    <div class="row" style="margin-bottom:12px;flex-wrap:wrap;gap:8px;">
+      <select id="uuid-type" style="min-width:160px;">
+        <option value="uuidv4">UUID v4 (Random)</option>
+        <option value="gaid">GAID (Android)</option>
+        <option value="idfa">IDFA (iOS)</option>
+        <option value="all">All (UUID + GAID + IDFA)</option>
+      </select>
+      <input type="number" id="uuid-count" value="1" min="1" max="100" style="max-width:80px;" title="Count">
+      <label style="display:flex;align-items:center;gap:4px;font-size:13px;color:var(--text2);"><input type="checkbox" id="uuid-nohyphen"> No hyphens</label>
+      <label style="display:flex;align-items:center;gap:4px;font-size:13px;color:var(--text2);"><input type="checkbox" id="uuid-upper"> UPPERCASE</label>
+      <button class="btn-primary" onclick="uuidGenerate()">🆔 Generate</button>
+      <button class="btn-ghost" onclick="copyEl('uuid-output')">📋 Copy</button>
+    </div>
+    <div style="margin-bottom:12px;">
+      <div class="output"><textarea id="uuid-output" readonly placeholder="Click Generate..." style="min-height:180px;"></textarea></div>
+    </div>
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:16px;font-size:13px;color:var(--text2);line-height:1.7;">
+      <strong style="color:var(--text);">📖 Reference</strong><br>
+      <b>UUID v4</b> — Random 128-bit identifier. Format: <code>xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx</code><br>
+      <b>GAID</b> — Google Advertising ID (Android). Same format as UUID v4, lowercase.<br>
+      <b>IDFA</b> — Identifier for Advertisers (iOS/Apple). Same format as UUID v4, UPPERCASE.
+    </div>
+  </div>
+
 </div><!-- /content -->
 
 <div class="mobile-tabs">
@@ -756,6 +783,7 @@
   <div class="tab" data-tab="color"><span class="icon">🎨</span><span class="label">Color</span></div>
   <div class="tab" data-tab="regex"><span class="icon">🔍</span><span class="label">Regex</span></div>
   <div class="tab" data-tab="percent"><span class="icon">🔢</span><span class="label">Percent</span></div>
+  <div class="tab" data-tab="uuid"><span class="icon">🆔</span><span class="label">UUID</span></div>
   <div class="tab" data-tab="diff"><span class="icon">📊</span><span class="label">Diff</span></div>
   <div class="tab" data-tab="lorem"><span class="icon">📄</span><span class="label">Lorem</span></div>
 </div>
@@ -1542,6 +1570,47 @@ document.querySelectorAll('[id^="pc"]').forEach(el => {
 
 // 초기 색상
 colorConvert();
+
+// ===== UUID / ADID Generator =====
+function generateUUIDv4() {
+  // crypto.randomUUID() 대신 직접 구현 (호환성)
+  const b = new Uint8Array(16);
+  crypto.getRandomValues(b);
+  b[6] = (b[6] & 0x0f) | 0x40; // version 4
+  b[8] = (b[8] & 0x3f) | 0x80; // variant 1
+  const h = Array.from(b, x => x.toString(16).padStart(2, '0')).join('');
+  return `${h.slice(0,8)}-${h.slice(8,12)}-${h.slice(12,16)}-${h.slice(16,20)}-${h.slice(20)}`;
+}
+function uuidGenerate() {
+  const type = document.getElementById('uuid-type').value;
+  const count = Math.min(100, Math.max(1, parseInt(document.getElementById('uuid-count').value) || 1));
+  const noHyphen = document.getElementById('uuid-nohyphen').checked;
+  const upper = document.getElementById('uuid-upper').checked;
+  const lines = [];
+  for (let i = 0; i < count; i++) {
+    if (type === 'all') {
+      let uuid = generateUUIDv4();
+      let gaid = generateUUIDv4();
+      let idfa = generateUUIDv4().toUpperCase();
+      if (noHyphen) { uuid = uuid.replace(/-/g,''); gaid = gaid.replace(/-/g,''); idfa = idfa.replace(/-/g,''); }
+      if (upper) { uuid = uuid.toUpperCase(); gaid = gaid.toUpperCase(); }
+      lines.push(`UUID:  ${uuid}`);
+      lines.push(`GAID:  ${gaid}`);
+      lines.push(`IDFA:  ${idfa}`);
+      if (i < count - 1) lines.push('');
+    } else {
+      let id = generateUUIDv4();
+      if (type === 'idfa' || upper) id = id.toUpperCase();
+      if (noHyphen) id = id.replace(/-/g, '');
+      if (type !== 'uuidv4' && type !== 'all') {
+        lines.push(`${type.toUpperCase()}: ${id}`);
+      } else {
+        lines.push(id);
+      }
+    }
+  }
+  document.getElementById('uuid-output').value = lines.join('\n');
+}
 </script>
 <noscript>
 <div style="padding:2rem;color:#eee;background:#0f0f1a;">
@@ -1563,6 +1632,7 @@ colorConvert();
 <li><strong>Percent Calculator</strong> — 5 types of percentage calculations</li>
 <li><strong>Text Diff</strong> — Compare two texts with line-by-line diff highlighting</li>
 <li><strong>Lorem Ipsum Generator</strong> — Generate placeholder text in English and Korean</li>
+<li><strong>UUID / ADID Generator</strong> — Generate UUID v4, GAID (Android), IDFA (iOS) identifiers in bulk</li>
 <li><strong>Memo Pad</strong> — Quick notes with auto-save to browser storage</li>
 </ul>
 <p>All tools run client-side — your data never leaves your browser. No signup required.</p>
