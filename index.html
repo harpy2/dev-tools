@@ -1,0 +1,1535 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dev Tools — Free Online Developer Toolkit</title>
+<meta name="description" content="Free online developer tools: JSON formatter & validator, Unix timestamp converter, URL encoder/decoder, Base64, JWT decoder, regex tester, SQL formatter, color converter, hash generator, HTTP client, redirect tracer, and more. No signup required.">
+<meta name="keywords" content="JSON formatter, JSON beautifier, timestamp converter, URL encoder, URL decoder, Base64 encoder, JWT decoder, regex tester, SQL formatter, color converter, hash generator, SHA256, HTTP client, redirect checker, developer tools, online tools, web tools, free tools">
+<meta name="author" content="Dev Tools">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://tools.salmonholic.com/">
+
+<!-- Open Graph -->
+<meta property="og:title" content="Dev Tools — Free Online Developer Toolkit">
+<meta property="og:description" content="16+ free developer tools in one page. JSON, timestamp, URL, Base64, JWT, regex, SQL, color, hash, HTTP client and more.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://tools.salmonholic.com/">
+
+<!-- Twitter -->
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Dev Tools — Free Online Developer Toolkit">
+<meta name="twitter:description" content="16+ free developer tools in one page. No signup, no ads, just tools.">
+
+<!-- Structured Data -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "Dev Tools",
+  "description": "Free online developer toolkit with 16+ tools including JSON formatter, timestamp converter, URL encoder, Base64, JWT decoder, regex tester, SQL formatter, and more.",
+  "url": "https://tools.salmonholic.com/",
+  "applicationCategory": "DeveloperApplication",
+  "operatingSystem": "Any",
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+  "featureList": ["JSON Formatter", "Timestamp Converter", "URL Encoder/Decoder", "Base64 Encoder/Decoder", "JWT Decoder", "Regex Tester", "SQL Formatter", "Color Converter", "Hash Generator", "HTTP Client", "Redirect Tracer", "Text Diff", "Percent Calculator", "Escape/Unescape", "Lorem Generator", "Memo Pad"]
+}
+</script>
+<style>
+  :root {
+    --bg: #0f0f1a;
+    --surface: #1a1a2e;
+    --surface2: #16213e;
+    --surface3: #0f3460;
+    --accent: #e94560;
+    --accent2: #533483;
+    --text: #eee;
+    --text2: #999;
+    --text3: #666;
+    --border: #2a2a4a;
+    --success: #4ade80;
+    --error: #f87171;
+    --warn: #fbbf24;
+    --info: #60a5fa;
+    --mono: 'Fira Code', 'Cascadia Code', 'JetBrains Mono', 'Consolas', monospace;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    height: 100vh;
+    height: 100dvh;
+    display: flex;
+    overflow: hidden;
+  }
+
+  /* 레이아웃 */
+  .app {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+  }
+
+  /* 사이드바 */
+  .sidebar {
+    width: 200px;
+    background: var(--surface);
+    border-right: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+    overflow: hidden;
+  }
+  /* mobile-hidden handled by media query */
+  .sidebar-header {
+    padding: 16px;
+    border-bottom: 1px solid var(--border);
+  }
+  .sidebar-header h1 {
+    font-size: 1.1em;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .sidebar-nav {
+    flex: 1;
+    overflow-y: auto;
+    padding: 8px;
+    scrollbar-width: thin;
+    scrollbar-color: var(--border) transparent;
+  }
+  .sidebar-nav::-webkit-scrollbar { width: 4px; }
+  .sidebar-nav::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+  .nav-group {
+    margin-bottom: 12px;
+  }
+  .nav-group-label {
+    font-size: 0.65em;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text3);
+    padding: 4px 10px;
+    margin-bottom: 2px;
+  }
+  .tab {
+    padding: 7px 10px;
+    font-size: 0.82em;
+    color: var(--text2);
+    cursor: pointer;
+    border-radius: 6px;
+    transition: all 0.12s;
+    user-select: none;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    white-space: nowrap;
+  }
+  .tab:hover { color: var(--text); background: rgba(255,255,255,0.05); }
+  .tab.active {
+    color: var(--accent);
+    background: rgba(233,69,96,0.1);
+  }
+  .tab .icon { font-size: 1em; width: 20px; text-align: center; }
+
+  /* 콘텐츠 영역 */
+  .content {
+    flex: 1;
+    overflow-y: auto;
+    padding: 24px;
+    min-height: 0;
+  }
+  .panel { display: none; max-width: 900px; margin: 0 auto; }
+  .panel.active { display: block; }
+
+  /* 모바일: 하단 탭 */
+  .mobile-tabs {
+    display: none;
+    background: var(--surface);
+    border-top: 1px solid var(--border);
+    overflow-x: auto;
+    flex-shrink: 0;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+    padding: 4px 0;
+  }
+  .mobile-tabs::-webkit-scrollbar { display: none; }
+  .mobile-tabs .tab {
+    padding: 10px 16px;
+    border-radius: 0;
+    font-size: 0.75em;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 52px;
+    text-align: center;
+    flex-shrink: 0;
+  }
+  .mobile-tabs .tab .label { font-size: 0.6em; }
+  .mobile-tabs .tab .icon { width: auto; font-size: 1.1em; }
+
+  /* 공통 UI */
+  textarea, input[type="text"], input[type="number"] {
+    width: 100%;
+    background: var(--bg);
+    color: var(--text);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 12px;
+    font-family: var(--mono);
+    font-size: 0.85em;
+    resize: vertical;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  textarea:focus, input:focus { border-color: var(--accent); }
+  textarea { min-height: 140px; }
+  label { font-size: 0.8em; color: var(--text2); margin-bottom: 6px; display: block; }
+  .section { margin-bottom: 16px; }
+  .row { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+  .row input, .row select { flex: 1; min-width: 150px; }
+
+  button {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.82em;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s;
+    white-space: nowrap;
+  }
+  button:active { transform: scale(0.97); }
+  .btn-primary { background: var(--accent); color: white; }
+  .btn-primary:hover { background: #d63a52; }
+  .btn-secondary { background: var(--surface3); color: var(--text); }
+  .btn-secondary:hover { background: #1a4a7a; }
+  .btn-ghost { background: transparent; color: var(--text2); border: 1px solid var(--border); }
+  .btn-ghost:hover { border-color: var(--text2); color: var(--text); }
+  .btn-row { display: flex; gap: 8px; margin: 12px 0; flex-wrap: wrap; }
+
+  .output {
+    margin-top: 12px;
+    background: rgba(0,0,0,0.3);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 12px;
+    font-family: var(--mono);
+    font-size: 0.85em;
+    min-height: 60px;
+    white-space: pre-wrap;
+    word-break: break-all;
+    overflow-y: auto;
+    max-height: 400px;
+  }
+  .output textarea {
+    background: transparent;
+    border: none;
+    padding: 0;
+    min-height: 100px;
+  }
+
+  .status {
+    font-size: 0.8em;
+    padding: 4px 10px;
+    border-radius: 6px;
+    display: inline-block;
+    margin: 4px 0;
+  }
+  .status-ok { background: rgba(74,222,128,0.15); color: var(--success); }
+  .status-err { background: rgba(248,113,113,0.15); color: var(--error); }
+  .status-info { background: rgba(96,165,250,0.15); color: var(--info); }
+  .status-warn { background: rgba(251,191,36,0.15); color: var(--warn); }
+
+  /* 메모 전용 */
+  .memo-area textarea { min-height: calc(100vh - 200px); }
+  .memo-meta { display: flex; justify-content: space-between; font-size: 0.75em; color: var(--text2); margin-top: 6px; }
+
+  /* 타임스탬프 결과 */
+  .ts-result { line-height: 2; }
+  .ts-result .lbl { color: var(--text2); min-width: 70px; display: inline-block; }
+
+  /* 정규식 match 하이라이트 */
+  .match-hl { background: rgba(233,69,96,0.3); padding: 1px 3px; border-radius: 3px; }
+  .match-group { background: rgba(83,52,131,0.4); padding: 1px 3px; border-radius: 3px; }
+
+  /* 색상 도구 */
+  .color-preview {
+    width: 100%;
+    height: 80px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    margin: 12px 0;
+    transition: background 0.2s;
+  }
+  .color-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 10px;
+  }
+  .color-grid .section { margin-bottom: 0; }
+  input[type="color"] {
+    width: 50px; height: 36px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    background: var(--bg);
+    cursor: pointer;
+    padding: 2px;
+  }
+
+  /* JWT */
+  .jwt-part { margin-bottom: 12px; }
+  .jwt-part h4 { font-size: 0.85em; margin-bottom: 6px; }
+  .jwt-header { color: #f87171; }
+  .jwt-payload { color: #4ade80; }
+  .jwt-sig { color: #60a5fa; }
+
+  /* Hash */
+  .hash-result-row { display: flex; align-items: center; gap: 8px; margin: 6px 0; }
+  .hash-result-row .lbl { min-width: 70px; font-size: 0.8em; color: var(--text2); }
+  .hash-result-row code { font-family: var(--mono); font-size: 0.8em; flex: 1; word-break: break-all; }
+
+  /* 토스트 */
+  .toast {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    padding: 8px 16px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-size: 0.8em;
+    color: var(--text2);
+    opacity: 0;
+    transition: opacity 0.3s;
+    pointer-events: none;
+    z-index: 100;
+  }
+  .toast.show { opacity: 1; }
+
+  /* 모바일 */
+  @media screen and (max-width: 1024px) {
+    .app { flex-direction: column; }
+    .sidebar { display: none !important; width: 0 !important; }
+    .mobile-tabs { display: flex !important; order: -1; }
+    .content { padding: 12px; flex: 1; min-height: 0; }
+    .row { flex-direction: column; }
+    .row input, .row select { min-width: auto; }
+    .color-grid { grid-template-columns: 1fr; }
+    .memo-area textarea { min-height: calc(100dvh - 120px); }
+  }
+  /* 데스크탑 */
+  @media screen and (min-width: 1025px) {
+    .mobile-tabs { display: none !important; }
+  }
+</style>
+</head>
+<body>
+
+<div class="app">
+
+<nav class="sidebar">
+  <div class="sidebar-header">
+    <h1>🛠 Dev Tools</h1>
+  </div>
+  <div class="sidebar-nav">
+    <div class="nav-group">
+      <div class="nav-group-label">General</div>
+      <div class="tab active" data-tab="memo"><span class="icon">📝</span><span class="label">Memo</span></div>
+      <div class="tab" data-tab="percent"><span class="icon">🔢</span><span class="label">Percent Calc</span></div>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-label">Format & Convert</div>
+      <div class="tab" data-tab="json"><span class="icon">{ }</span><span class="label">JSON</span></div>
+      <div class="tab" data-tab="sql"><span class="icon">🗃</span><span class="label">SQL Formatter</span></div>
+      <div class="tab" data-tab="url"><span class="icon">🔗</span><span class="label">URL</span></div>
+      <div class="tab" data-tab="base64"><span class="icon">🔤</span><span class="label">Base64</span></div>
+      <div class="tab" data-tab="escape"><span class="icon">⎋</span><span class="label">Escape</span></div>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-label">Time & Color</div>
+      <div class="tab" data-tab="timestamp"><span class="icon">🕐</span><span class="label">Timestamp</span></div>
+      <div class="tab" data-tab="color"><span class="icon">🎨</span><span class="label">Color</span></div>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-label">Security</div>
+      <div class="tab" data-tab="jwt"><span class="icon">🎫</span><span class="label">JWT</span></div>
+      <div class="tab" data-tab="hash"><span class="icon">🔐</span><span class="label">Hash</span></div>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-label">Network</div>
+      <div class="tab" data-tab="http"><span class="icon">🌐</span><span class="label">HTTP Request</span></div>
+      <div class="tab" data-tab="redirect"><span class="icon">🔀</span><span class="label">Redirect</span></div>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-label">Text</div>
+      <div class="tab" data-tab="regex"><span class="icon">🔍</span><span class="label">Regex</span></div>
+      <div class="tab" data-tab="diff"><span class="icon">📊</span><span class="label">Diff</span></div>
+      <div class="tab" data-tab="lorem"><span class="icon">📄</span><span class="label">Lorem</span></div>
+    </div>
+  </div>
+</nav>
+
+<div class="content">
+
+  <!-- ===== 메모장 ===== -->
+  <div class="panel active" id="panel-memo">
+    <div class="memo-area">
+      <textarea id="memo" placeholder="Write anything... Auto-saved every 3 seconds."></textarea>
+    </div>
+    <div class="memo-meta">
+      <span id="memo-chars">0 chars / 0 lines</span>
+      <span id="memo-saved"></span>
+    </div>
+  </div>
+
+  <!-- ===== JSON ===== -->
+  <div class="panel" id="panel-json">
+    <div class="section">
+      <label>JSON Input</label>
+      <textarea id="json-input" placeholder='{"key": "value", "array": [1, 2, 3]}'></textarea>
+    </div>
+    <div class="btn-row">
+      <button class="btn-primary" onclick="jsonBeautify()">✨ Beautify</button>
+      <button class="btn-secondary" onclick="jsonMinify()">📦 Minify</button>
+      <button class="btn-secondary" onclick="jsonValidate()">✅ Validate</button>
+      <button class="btn-secondary" onclick="jsonToTS()">📐 → TypeScript</button>
+      <button class="btn-ghost" onclick="copyEl('json-output')">📋 Copy</button>
+      <button class="btn-ghost" onclick="clr('json-input','json-output','json-status')">🗑</button>
+    </div>
+    <div id="json-status"></div>
+    <div class="output"><textarea id="json-output" readonly placeholder="Result"></textarea></div>
+  </div>
+
+  <!-- ===== 타임스탬프 ===== -->
+  <div class="panel" id="panel-timestamp">
+    <div class="section">
+      <label>Timestamp or Date Input</label>
+      <div class="row">
+        <input type="text" id="ts-input" placeholder="1707840000 or 2024-02-14 09:00:00">
+        <button class="btn-primary" onclick="convertTs()">Convert</button>
+      </div>
+    </div>
+    <div class="btn-row">
+      <button class="btn-ghost" onclick="tsNow()">⏱ Now</button>
+      <button class="btn-ghost" onclick="tsToday()">📅 Today 00:00</button>
+      <button class="btn-ghost" onclick="tsCopy('s')">Copy sec</button>
+      <button class="btn-ghost" onclick="tsCopy('ms')">Copy ms</button>
+    </div>
+    <div id="ts-result" class="output ts-result" style="display:none;"></div>
+  </div>
+
+  <!-- ===== URL ===== -->
+  <div class="panel" id="panel-url">
+    <div class="section">
+      <label>Input</label>
+      <textarea id="url-input" placeholder="Enter URL or text..." style="min-height:80px;"></textarea>
+    </div>
+    <div class="btn-row">
+      <button class="btn-primary" onclick="urlEncode()">🔒 Encode</button>
+      <button class="btn-secondary" onclick="urlDecode()">🔓 Decode</button>
+      <button class="btn-secondary" onclick="urlEncComp()">🔒 Component</button>
+      <button class="btn-secondary" onclick="urlParse()">🔍 Parse</button>
+      <button class="btn-ghost" onclick="copyEl('url-output')">📋 Copy</button>
+      <button class="btn-ghost" onclick="clr('url-input','url-output')">🗑</button>
+    </div>
+    <div class="output"><textarea id="url-output" readonly placeholder="Result" style="min-height:80px;"></textarea></div>
+  </div>
+
+  <!-- ===== Base64 ===== -->
+  <div class="panel" id="panel-base64">
+    <div class="section">
+      <label>Input</label>
+      <textarea id="b64-input" placeholder="Enter text or Base64 string..."></textarea>
+    </div>
+    <div class="btn-row">
+      <button class="btn-primary" onclick="b64Encode()">🔒 Encode</button>
+      <button class="btn-secondary" onclick="b64Decode()">🔓 Decode</button>
+      <button class="btn-ghost" onclick="copyEl('b64-output')">📋 Copy</button>
+      <button class="btn-ghost" onclick="clr('b64-input','b64-output')">🗑</button>
+    </div>
+    <div class="output"><textarea id="b64-output" readonly placeholder="Result"></textarea></div>
+  </div>
+
+  <!-- ===== JWT ===== -->
+  <div class="panel" id="panel-jwt">
+    <div class="section">
+      <label>JWT Token Input</label>
+      <textarea id="jwt-input" placeholder="eyJhbGciOiJIUzI1NiIs..." style="min-height:80px;"></textarea>
+    </div>
+    <div class="btn-row">
+      <button class="btn-primary" onclick="jwtDecode()">🔍 Decode</button>
+      <button class="btn-ghost" onclick="clr('jwt-input');document.getElementById('jwt-result').innerHTML=''">🗑</button>
+    </div>
+    <div id="jwt-result"></div>
+  </div>
+
+  <!-- ===== 정규식 ===== -->
+  <div class="panel" id="panel-regex">
+    <div class="section">
+      <label>Regex Pattern</label>
+      <div class="row">
+        <input type="text" id="regex-pattern" placeholder="e.g. (\d{4})-(\d{2})-(\d{2})">
+        <input type="text" id="regex-flags" placeholder="gi" style="max-width:60px;flex:none;">
+      </div>
+    </div>
+    <div class="section">
+      <label>Test String</label>
+      <textarea id="regex-input" placeholder="Enter test string..."></textarea>
+    </div>
+    <div class="btn-row">
+      <button class="btn-primary" onclick="regexTest()">🔍 Test</button>
+      <button class="btn-ghost" onclick="clr('regex-pattern','regex-input');document.getElementById('regex-result').innerHTML=''">🗑</button>
+    </div>
+    <div id="regex-result"></div>
+  </div>
+
+  <!-- ===== 색상 ===== -->
+  <div class="panel" id="panel-color">
+    <div class="section">
+      <label>Color Input (HEX, RGB, HSL)</label>
+      <div class="row">
+        <input type="text" id="color-input" placeholder="#e94560 or rgb(233,69,96) or hsl(350,80%,59%)">
+        <input type="color" id="color-picker" value="#e94560">
+        <button class="btn-primary" onclick="colorConvert()">Convert</button>
+      </div>
+    </div>
+    <div class="color-preview" id="color-preview" style="background:#e94560;"></div>
+    <div class="color-grid" id="color-result">
+      <div class="section"><label>HEX</label><input type="text" id="color-hex" readonly></div>
+      <div class="section"><label>RGB</label><input type="text" id="color-rgb" readonly></div>
+      <div class="section"><label>HSL</label><input type="text" id="color-hsl" readonly></div>
+      <div class="section"><label>CSS Variable</label><input type="text" id="color-css" readonly></div>
+    </div>
+  </div>
+
+  <!-- ===== Hash ===== -->
+  <div class="panel" id="panel-hash">
+    <div class="section">
+      <label>Input Text</label>
+      <textarea id="hash-input" placeholder="Enter text to hash..."></textarea>
+    </div>
+    <div class="btn-row">
+      <button class="btn-primary" onclick="hashGenerate()">🔐 Generate Hash</button>
+      <button class="btn-ghost" onclick="clr('hash-input');document.getElementById('hash-result').innerHTML=''">🗑</button>
+    </div>
+    <div id="hash-result" class="output" style="display:none;"></div>
+  </div>
+
+  <!-- ===== HTTP 요청 ===== -->
+  <div class="panel" id="panel-http">
+    <div class="section">
+      <div class="row">
+        <select id="http-method" style="max-width:120px;flex:none;background:var(--bg);color:var(--text);border:1px solid var(--border);border-radius:8px;padding:10px;font-size:0.85em;">
+          <option>GET</option><option>POST</option><option>PUT</option><option>PATCH</option><option>DELETE</option><option>HEAD</option><option>OPTIONS</option>
+        </select>
+        <input type="text" id="http-url" placeholder="https://api.example.com/endpoint">
+        <button class="btn-primary" onclick="httpSend()" id="http-send-btn">🚀 Send</button>
+      </div>
+    </div>
+    <div class="section">
+      <label>Request Headers (JSON)</label>
+      <textarea id="http-headers" style="min-height:60px;" placeholder='{"Authorization": "Bearer token", "Content-Type": "application/json"}'></textarea>
+    </div>
+    <div class="section" id="http-body-section">
+      <label>Request Body</label>
+      <textarea id="http-body" style="min-height:80px;" placeholder='{"key": "value"}'></textarea>
+    </div>
+    <div class="btn-row">
+      <label style="display:flex;align-items:center;gap:4px;font-size:0.8em;color:var(--text2);cursor:pointer;">
+        <input type="checkbox" id="http-insecure"> Skip SSL
+      </label>
+    </div>
+    <div id="http-status-bar" style="display:none;margin:12px 0;"></div>
+    <div id="http-response" style="display:none;">
+      <div class="tabs" style="border:none;background:transparent;margin-bottom:0;">
+        <div class="tab active" onclick="httpTab(this,'http-resp-body')" style="padding:6px 12px;font-size:0.8em;">Body</div>
+        <div class="tab" onclick="httpTab(this,'http-resp-headers')" style="padding:6px 12px;font-size:0.8em;">Headers</div>
+      </div>
+      <div id="http-resp-body" class="output" style="max-height:500px;"><textarea id="http-resp-body-text" readonly style="min-height:200px;"></textarea></div>
+      <div id="http-resp-headers" class="output" style="display:none;max-height:400px;"></div>
+    </div>
+  </div>
+
+  <!-- ===== 리다이렉트 추적 ===== -->
+  <div class="panel" id="panel-redirect">
+    <div class="section">
+      <label>URL Input</label>
+      <div class="row">
+        <input type="text" id="redir-url" placeholder="https://bit.ly/example or short URL">
+        <button class="btn-primary" onclick="redirectTrace()" id="redir-btn">🔀 Trace</button>
+      </div>
+    </div>
+    <div class="btn-row">
+      <label style="display:flex;align-items:center;gap:4px;font-size:0.8em;color:var(--text2);cursor:pointer;">
+        <input type="checkbox" id="redir-insecure"> Skip SSL
+      </label>
+    </div>
+    <div id="redir-result" style="display:none;"></div>
+  </div>
+
+  <!-- ===== SQL 포맷터 ===== -->
+  <div class="panel" id="panel-sql">
+    <div class="section">
+      <label>SQL Input</label>
+      <textarea id="sql-input" placeholder="SELECT * FROM users WHERE id = 1 AND status = 'active' ORDER BY created_at DESC LIMIT 10"></textarea>
+    </div>
+    <div class="btn-row">
+      <button class="btn-primary" onclick="sqlFormat()">✨ Beautify</button>
+      <button class="btn-secondary" onclick="sqlMinify()">📦 Minify</button>
+      <button class="btn-secondary" onclick="sqlUpper()">🔠 UPPER Keywords</button>
+      <button class="btn-secondary" onclick="sqlLower()">🔡 lower Keywords</button>
+      <button class="btn-ghost" onclick="copyEl('sql-output')">📋 Copy</button>
+      <button class="btn-ghost" onclick="clr('sql-input','sql-output')">🗑</button>
+    </div>
+    <div class="output"><textarea id="sql-output" readonly placeholder="Result" style="min-height:200px;"></textarea></div>
+  </div>
+
+  <!-- ===== 이스케이프/언이스케이프 ===== -->
+  <div class="panel" id="panel-escape">
+    <div class="section">
+      <label>Input</label>
+      <textarea id="esc-input" placeholder="Enter text..."></textarea>
+    </div>
+    <div style="font-size:0.8em;color:var(--text2);margin-bottom:8px;">HTML</div>
+    <div class="btn-row" style="margin-top:0;">
+      <button class="btn-primary" onclick="escHtmlEnc()">🔒 HTML Escape</button>
+      <button class="btn-secondary" onclick="escHtmlDec()">🔓 HTML Unescape</button>
+    </div>
+    <div style="font-size:0.8em;color:var(--text2);margin-bottom:8px;margin-top:12px;">Unicode</div>
+    <div class="btn-row" style="margin-top:0;">
+      <button class="btn-primary" onclick="escUnicodeEnc()">🔒 Unicode Escape</button>
+      <button class="btn-secondary" onclick="escUnicodeDec()">🔓 Unicode Unescape</button>
+    </div>
+    <div style="font-size:0.8em;color:var(--text2);margin-bottom:8px;margin-top:12px;">Backslash (JSON String)</div>
+    <div class="btn-row" style="margin-top:0;">
+      <button class="btn-primary" onclick="escSlashEnc()">🔒 Escape</button>
+      <button class="btn-secondary" onclick="escSlashDec()">🔓 Unescape</button>
+    </div>
+    <div class="btn-row">
+      <button class="btn-ghost" onclick="copyEl('esc-output')">📋 Copy</button>
+      <button class="btn-ghost" onclick="clr('esc-input','esc-output')">🗑</button>
+    </div>
+    <div class="output"><textarea id="esc-output" readonly placeholder="Result"></textarea></div>
+  </div>
+
+  <!-- ===== 퍼센트 계산기 ===== -->
+  <div class="panel" id="panel-percent">
+    <div style="display:flex;flex-direction:column;gap:20px;">
+
+      <!-- 계산 1: A의 B%는 얼마? -->
+      <div class="section" style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:16px;">
+        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+          <input type="number" id="pc1-total" placeholder="Total e.g. 10000" style="max-width:160px;">
+          <span style="color:var(--text2);">of</span>
+          <input type="number" id="pc1-rate" placeholder="Rate e.g. 20" style="max-width:130px;">
+          <span style="color:var(--text2);">% is?</span>
+          <button class="btn-primary" onclick="pcCalc1()">Calc</button>
+          <span id="pc1-result" style="font-weight:700;color:var(--success);font-size:1.1em;"></span>
+        </div>
+        <div style="font-size:0.75em;color:var(--text3);margin-top:6px;">e.g. 20% of 10000 = 2000</div>
+      </div>
+
+      <!-- 계산 2: A의 B는 몇%? -->
+      <div class="section" style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:16px;">
+        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+          <input type="number" id="pc2-total" placeholder="Total e.g. 10000" style="max-width:160px;">
+          <span style="color:var(--text2);">of</span>
+          <input type="number" id="pc2-part" placeholder="Part e.g. 500" style="max-width:130px;">
+          <span style="color:var(--text2);">is what %?</span>
+          <button class="btn-primary" onclick="pcCalc2()">Calc</button>
+          <span id="pc2-result" style="font-weight:700;color:var(--success);font-size:1.1em;"></span>
+        </div>
+        <div style="font-size:0.75em;color:var(--text3);margin-top:6px;">e.g. 500 of 10000 = 5%</div>
+      </div>
+
+      <!-- 계산 3: A이/가 B으로 변하면? (증감률) -->
+      <div class="section" style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:16px;">
+        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+          <input type="number" id="pc3-from" placeholder="Total e.g. 10000" style="max-width:160px;">
+          <span style="color:var(--text2);">to</span>
+          <input type="number" id="pc3-to" placeholder="New value e.g. 25000" style="max-width:130px;">
+          <span style="color:var(--text2);">= what % change?</span>
+          <button class="btn-primary" onclick="pcCalc3()">Calc</button>
+          <span id="pc3-result" style="font-weight:700;font-size:1.1em;"></span>
+        </div>
+        <div style="font-size:0.75em;color:var(--text3);margin-top:6px;">e.g. 10000 → 25000 = 150% increase</div>
+      </div>
+
+      <!-- 계산 4: A이/가 B% 증가하면? -->
+      <div class="section" style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:16px;">
+        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+          <input type="number" id="pc4-total" placeholder="Total e.g. 10000" style="max-width:160px;">
+          <span style="color:var(--text2);">to</span>
+          <input type="number" id="pc4-rate" placeholder="Rate e.g. 25" style="max-width:130px;">
+          <span style="color:var(--text2);">% increase =?</span>
+          <button class="btn-primary" onclick="pcCalc4()">Calc</button>
+          <span id="pc4-result" style="font-weight:700;color:var(--success);font-size:1.1em;"></span>
+        </div>
+        <div style="font-size:0.75em;color:var(--text3);margin-top:6px;">e.g. 10000 + 25% = 12500</div>
+      </div>
+
+      <!-- 계산 5: 할인/마진 계산 -->
+      <div class="section" style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:16px;">
+        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+          <input type="number" id="pc5-original" placeholder="Original e.g. 50000" style="max-width:160px;">
+          <span style="color:var(--text2);">at</span>
+          <input type="number" id="pc5-discount" placeholder="Discount e.g. 30" style="max-width:130px;">
+          <span style="color:var(--text2);">% discount =?</span>
+          <button class="btn-primary" onclick="pcCalc5()">Calc</button>
+          <span id="pc5-result" style="font-weight:700;color:var(--success);font-size:1.1em;"></span>
+        </div>
+        <div style="font-size:0.75em;color:var(--text3);margin-top:6px;">e.g. 50000 - 30% = 35000 (saved: 15000)</div>
+      </div>
+
+    </div>
+    <div class="btn-row" style="margin-top:16px;">
+      <button class="btn-ghost" onclick="pcReset()">🗑 Reset</button>
+    </div>
+  </div>
+
+  <!-- ===== Diff ===== -->
+  <div class="panel" id="panel-diff">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+      <div class="section">
+        <label>Text A</label>
+        <textarea id="diff-a" placeholder="Original text..."></textarea>
+      </div>
+      <div class="section">
+        <label>Text B</label>
+        <textarea id="diff-b" placeholder="Compare text..."></textarea>
+      </div>
+    </div>
+    <div class="btn-row">
+      <button class="btn-primary" onclick="diffCompare()">📊 Compare</button>
+      <button class="btn-ghost" onclick="clr('diff-a','diff-b');document.getElementById('diff-result').innerHTML=''">🗑</button>
+    </div>
+    <div id="diff-result" class="output" style="display:none;"></div>
+  </div>
+
+  <!-- ===== Lorem ===== -->
+  <div class="panel" id="panel-lorem">
+    <div class="row" style="margin-bottom:12px;">
+      <select id="lorem-type">
+        <option value="paragraphs">Paragraphs</option>
+        <option value="sentences">Sentences</option>
+        <option value="words">Words</option>
+      </select>
+      <input type="number" id="lorem-count" value="3" min="1" max="100" style="max-width:80px;">
+      <select id="lorem-lang">
+        <option value="en">English</option>
+        <option value="ko">한국어</option>
+      </select>
+      <button class="btn-primary" onclick="loremGenerate()">📄 Generate</button>
+      <button class="btn-ghost" onclick="copyEl('lorem-output')">📋 Copy</button>
+    </div>
+    <div class="output"><textarea id="lorem-output" readonly placeholder="Lorem ipsum..." style="min-height:200px;"></textarea></div>
+  </div>
+
+</div><!-- /content -->
+
+<div class="mobile-tabs">
+  <div class="tab active" data-tab="memo"><span class="icon">📝</span><span class="label">Memo</span></div>
+  <div class="tab" data-tab="json"><span class="icon">{ }</span><span class="label">JSON</span></div>
+  <div class="tab" data-tab="sql"><span class="icon">🗃</span><span class="label">SQL</span></div>
+  <div class="tab" data-tab="timestamp"><span class="icon">🕐</span><span class="label">Time</span></div>
+  <div class="tab" data-tab="url"><span class="icon">🔗</span><span class="label">URL</span></div>
+  <div class="tab" data-tab="base64"><span class="icon">🔤</span><span class="label">Base64</span></div>
+  <div class="tab" data-tab="escape"><span class="icon">⎋</span><span class="label">Escape</span></div>
+  <div class="tab" data-tab="jwt"><span class="icon">🎫</span><span class="label">JWT</span></div>
+  <div class="tab" data-tab="hash"><span class="icon">🔐</span><span class="label">Hash</span></div>
+  <div class="tab" data-tab="http"><span class="icon">🌐</span><span class="label">HTTP</span></div>
+  <div class="tab" data-tab="redirect"><span class="icon">🔀</span><span class="label">Redirect</span></div>
+  <div class="tab" data-tab="color"><span class="icon">🎨</span><span class="label">Color</span></div>
+  <div class="tab" data-tab="regex"><span class="icon">🔍</span><span class="label">Regex</span></div>
+  <div class="tab" data-tab="percent"><span class="icon">🔢</span><span class="label">Percent</span></div>
+  <div class="tab" data-tab="diff"><span class="icon">📊</span><span class="label">Diff</span></div>
+  <div class="tab" data-tab="lorem"><span class="icon">📄</span><span class="label">Lorem</span></div>
+</div>
+
+</div><!-- /app -->
+
+<div class="toast" id="toast">💾 Saved</div>
+
+<script>
+// 모바일 감지는 CSS에서 처리 (미디어쿼리)
+
+// ===== 탭 전환 =====
+function switchTab(tabName) {
+  document.querySelectorAll('.sidebar .tab, .mobile-tabs .tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll(`.sidebar .tab[data-tab="${tabName}"], .mobile-tabs .tab[data-tab="${tabName}"]`).forEach(t => t.classList.add('active'));
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  const panel = document.getElementById('panel-' + tabName);
+  if (panel) panel.classList.add('active');
+  localStorage.setItem('devtools-tab', tabName);
+  // URL 해시 업데이트 (뒤로가기 지원)
+  if (history.replaceState) history.replaceState(null, '', '#' + tabName);
+  // 페이지 타이틀 업데이트 (SEO + 탭 구분)
+  const titles = {memo:'Memo',json:'JSON Formatter',sql:'SQL Formatter',timestamp:'Timestamp Converter',url:'URL Encoder/Decoder',base64:'Base64 Encoder/Decoder',escape:'Escape/Unescape',jwt:'JWT Decoder',hash:'Hash Generator',http:'HTTP Client',redirect:'Redirect Tracer',color:'Color Converter',regex:'Regex Tester',percent:'Percent Calculator',diff:'Text Diff',lorem:'Lorem Generator'};
+  document.title = (titles[tabName] || 'Dev Tools') + ' — Dev Tools';
+}
+
+document.querySelectorAll('.sidebar .tab[data-tab], .mobile-tabs .tab[data-tab]').forEach(tab => {
+  tab.addEventListener('click', () => switchTab(tab.dataset.tab));
+});
+
+// URL 해시 또는 마지막 탭 복원
+const hashTab = location.hash.replace('#', '');
+const initTab = hashTab && document.getElementById('panel-' + hashTab) ? hashTab : localStorage.getItem('devtools-tab');
+if (initTab) switchTab(initTab);
+
+// ===== 토스트 =====
+function toast(msg) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.classList.add('show');
+  setTimeout(() => el.classList.remove('show'), 1500);
+}
+
+// ===== 유틸 =====
+function copyEl(id) {
+  const el = document.getElementById(id);
+  if (!el || !el.value) return;
+  navigator.clipboard.writeText(el.value);
+  toast('📋 Copied');
+}
+function clr(...ids) {
+  ids.forEach(id => { const el = document.getElementById(id); if (el) { el.value = ''; el.innerHTML = ''; }});
+}
+
+// ===== 메모장 =====
+const memo = document.getElementById('memo');
+let lastMemo = '';
+
+const savedMemo = localStorage.getItem('devtools-memo');
+if (savedMemo) {
+  memo.value = savedMemo;
+  lastMemo = savedMemo;
+  updateMemoMeta();
+  const t = localStorage.getItem('devtools-memo-time');
+  if (t) document.getElementById('memo-saved').textContent = 'Saved: ' + t;
+}
+
+memo.addEventListener('input', updateMemoMeta);
+function updateMemoMeta() {
+  const v = memo.value;
+  const lines = v ? v.split('\n').length : 0;
+  document.getElementById('memo-chars').textContent = `${v.length} chars / ${lines} lines`;
+}
+
+setInterval(() => {
+  if (memo.value !== lastMemo) {
+    lastMemo = memo.value;
+    localStorage.setItem('devtools-memo', memo.value);
+    const now = new Date().toLocaleString('ko-KR');
+    localStorage.setItem('devtools-memo-time', now);
+    document.getElementById('memo-saved').textContent = 'Saved: ' + now;
+    toast('💾 Memo saved');
+  }
+}, 3000);
+
+// ===== JSON =====
+function jsonBeautify() {
+  const input = document.getElementById('json-input').value.trim();
+  if (!input) return;
+  try {
+    const obj = JSON.parse(input);
+    document.getElementById('json-output').value = JSON.stringify(obj, null, 2);
+    jsonShowStatus(obj, true);
+  } catch (e) { jsonErr(e); }
+}
+function jsonMinify() {
+  const input = document.getElementById('json-input').value.trim();
+  if (!input) return;
+  try {
+    document.getElementById('json-output').value = JSON.stringify(JSON.parse(input));
+    document.getElementById('json-status').innerHTML = '<span class="status status-ok">✅ Minified</span>';
+  } catch (e) { jsonErr(e); }
+}
+function jsonValidate() {
+  const input = document.getElementById('json-input').value.trim();
+  if (!input) return;
+  try { jsonShowStatus(JSON.parse(input), true); } catch (e) { jsonErr(e); }
+}
+function jsonShowStatus(obj) {
+  const info = Array.isArray(obj) ? `Array, ${obj.length} items` : typeof obj === 'object' && obj ? `Object, ${Object.keys(obj).length} keys` : typeof obj;
+  document.getElementById('json-status').innerHTML = `<span class="status status-ok">✅ Valid (${info})</span>`;
+}
+function jsonErr(e) {
+  document.getElementById('json-output').value = '';
+  const m = e.message.match(/position (\d+)/);
+  const hint = m ? ` — at position ${m[1]}` : '';
+  document.getElementById('json-status').innerHTML = `<span class="status status-err">❌ ${e.message}${hint}</span>`;
+}
+function jsonToTS() {
+  const input = document.getElementById('json-input').value.trim();
+  if (!input) return;
+  try {
+    const obj = JSON.parse(input);
+    document.getElementById('json-output').value = jsonToInterface(obj, 'Root');
+    document.getElementById('json-status').innerHTML = '<span class="status status-info">📐 TypeScript interface generated</span>';
+  } catch (e) { jsonErr(e); }
+}
+function jsonToInterface(obj, name) {
+  if (Array.isArray(obj)) {
+    if (obj.length === 0) return `type ${name} = any[];`;
+    return jsonToInterface(obj[0], name + 'Item') + `\n\ntype ${name} = ${name}Item[];`;
+  }
+  let lines = [`interface ${name} {`];
+  for (const [k, v] of Object.entries(obj)) {
+    let type = 'any';
+    if (v === null) type = 'null';
+    else if (typeof v === 'string') type = 'string';
+    else if (typeof v === 'number') type = Number.isInteger(v) ? 'number' : 'number';
+    else if (typeof v === 'boolean') type = 'boolean';
+    else if (Array.isArray(v)) type = v.length ? typeof v[0] + '[]' : 'any[]';
+    else if (typeof v === 'object') type = 'Record<string, any>';
+    lines.push(`  ${k}: ${type};`);
+  }
+  lines.push('}');
+  return lines.join('\n');
+}
+
+// ===== 타임스탬프 =====
+function convertTs() {
+  const input = document.getElementById('ts-input').value.trim();
+  const r = document.getElementById('ts-result');
+  if (!input) return;
+  r.style.display = 'block';
+
+  if (/^\d+$/.test(input)) {
+    let ts = parseInt(input);
+    const isSec = ts < 1e12;
+    const ms = isSec ? ts * 1000 : ts;
+    const d = new Date(ms);
+    if (isNaN(d.getTime())) { r.innerHTML = '<span class="status status-err">❌ Invalid timestamp</span>'; return; }
+    const kst = d.toLocaleString('ko-KR', { timeZone: 'Asia/Seoul', year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false });
+    r.innerHTML = `
+      <div><span class="lbl">Input</span>${input} (${isSec?'sec':'ms'})</div>
+      <div><span class="lbl">KST</span><strong>${kst}</strong></div>
+      <div><span class="lbl">UTC</span>${d.toUTCString()}</div>
+      <div><span class="lbl">ISO</span>${d.toISOString()}</div>
+      <div><span class="lbl">Relative</span>${relTime(d)}</div>
+      <div><span class="lbl">Sec</span>${Math.floor(ms/1000)} <span class="lbl" style="min-width:auto">Ms</span>${ms}</div>`;
+  } else {
+    let d;
+    if (/^\d{4}-\d{2}-\d{2}[\sT]\d{2}:\d{2}/.test(input) && !input.includes('Z') && !input.includes('+')) {
+      d = new Date(input + '+09:00');
+    } else { d = new Date(input); }
+    if (isNaN(d.getTime())) { r.innerHTML = '<span class="status status-err">❌ Invalid date</span>'; return; }
+    const kst = d.toLocaleString('ko-KR', { timeZone:'Asia/Seoul',year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false });
+    r.innerHTML = `
+      <div><span class="lbl">Input</span>${input}</div>
+      <div><span class="lbl">KST</span><strong>${kst}</strong></div>
+      <div><span class="lbl">Sec</span><strong>${Math.floor(d.getTime()/1000)}</strong></div>
+      <div><span class="lbl">Ms</span>${d.getTime()}</div>
+      <div><span class="lbl">ISO</span>${d.toISOString()}</div>`;
+  }
+}
+function relTime(d) {
+  const diff = Date.now() - d.getTime();
+  const a = Math.abs(diff), s = diff > 0 ? 'ago' : 'from now';
+  if (a < 60000) return Math.floor(a/1000) + 's ' + s;
+  if (a < 3600000) return Math.floor(a/60000) + 'm ' + s;
+  if (a < 86400000) return Math.floor(a/3600000) + 'h ' + s;
+  return Math.floor(a/86400000) + 'd ' + s;
+}
+function tsNow() { document.getElementById('ts-input').value = Math.floor(Date.now()/1000); convertTs(); }
+function tsToday() { const d = new Date(); d.setHours(0,0,0,0); document.getElementById('ts-input').value = Math.floor(d.getTime()/1000); convertTs(); }
+function tsCopy(u) { const v = u==='ms' ? Date.now() : Math.floor(Date.now()/1000); navigator.clipboard.writeText(String(v)); toast('📋 ' + v + ' copied'); }
+document.getElementById('ts-input').addEventListener('keydown', e => { if (e.key==='Enter') convertTs(); });
+
+// ===== URL =====
+function urlEncode() { document.getElementById('url-output').value = encodeURI(document.getElementById('url-input').value); }
+function urlDecode() {
+  try { document.getElementById('url-output').value = decodeURIComponent(document.getElementById('url-input').value); }
+  catch (e) { document.getElementById('url-output').value = '❌ ' + e.message; }
+}
+function urlEncComp() { document.getElementById('url-output').value = encodeURIComponent(document.getElementById('url-input').value); }
+function urlParse() {
+  try {
+    const u = new URL(document.getElementById('url-input').value);
+    let out = `protocol: ${u.protocol}\nhost: ${u.host}\npath: ${u.pathname}\nhash: ${u.hash}\n\nQuery Parameters:\n`;
+    u.searchParams.forEach((v,k) => out += `  ${k} = ${v}\n`);
+    document.getElementById('url-output').value = out;
+  } catch { document.getElementById('url-output').value = '❌ Not a valid URL'; }
+}
+
+// ===== Base64 =====
+function b64Encode() {
+  try { document.getElementById('b64-output').value = btoa(unescape(encodeURIComponent(document.getElementById('b64-input').value))); }
+  catch (e) { document.getElementById('b64-output').value = '❌ ' + e.message; }
+}
+function b64Decode() {
+  try { document.getElementById('b64-output').value = decodeURIComponent(escape(atob(document.getElementById('b64-input').value.trim()))); }
+  catch (e) { document.getElementById('b64-output').value = '❌ Not valid Base64'; }
+}
+
+// ===== JWT =====
+function jwtDecode() {
+  const token = document.getElementById('jwt-input').value.trim();
+  const r = document.getElementById('jwt-result');
+  const parts = token.split('.');
+  if (parts.length !== 3) { r.innerHTML = '<span class="status status-err">❌ JWT must have 3 parts (header.payload.signature)</span>'; return; }
+  try {
+    const header = JSON.parse(atob(parts[0].replace(/-/g,'+').replace(/_/g,'/')));
+    const payload = JSON.parse(atob(parts[1].replace(/-/g,'+').replace(/_/g,'/')));
+    let expInfo = '';
+    if (payload.exp) {
+      const expDate = new Date(payload.exp * 1000);
+      const expired = expDate < new Date();
+      expInfo = `<div style="margin-top:8px;"><span class="status ${expired?'status-err':'status-ok'}">${expired?'⏰ Expired':'✅ Valid'} — ${expDate.toLocaleString('ko-KR',{timeZone:'Asia/Seoul'})} KST</span></div>`;
+    }
+    if (payload.iat) { const d = new Date(payload.iat*1000); payload._iat_readable = d.toLocaleString('ko-KR',{timeZone:'Asia/Seoul'}) + ' KST'; }
+    if (payload.exp) { const d = new Date(payload.exp*1000); payload._exp_readable = d.toLocaleString('ko-KR',{timeZone:'Asia/Seoul'}) + ' KST'; }
+    r.innerHTML = `
+      ${expInfo}
+      <div class="jwt-part"><h4 class="jwt-header">📋 Header</h4><div class="output">${JSON.stringify(header,null,2)}</div></div>
+      <div class="jwt-part"><h4 class="jwt-payload">📦 Payload</h4><div class="output">${JSON.stringify(payload,null,2)}</div></div>
+      <div class="jwt-part"><h4 class="jwt-sig">🔑 Signature</h4><div class="output" style="word-break:break-all">${parts[2]}</div></div>`;
+  } catch (e) { r.innerHTML = '<span class="status status-err">❌ Decode failed: ' + e.message + '</span>'; }
+}
+
+// ===== 정규식 =====
+function regexTest() {
+  const pattern = document.getElementById('regex-pattern').value;
+  const flags = document.getElementById('regex-flags').value || 'g';
+  const input = document.getElementById('regex-input').value;
+  const r = document.getElementById('regex-result');
+  if (!pattern || !input) return;
+  try {
+    const re = new RegExp(pattern, flags);
+    const matches = [];
+    let m;
+    if (flags.includes('g')) {
+      while ((m = re.exec(input)) !== null) {
+        matches.push({ match: m[0], index: m.index, groups: m.slice(1) });
+        if (!m[0]) break;
+      }
+    } else {
+      m = re.exec(input);
+      if (m) matches.push({ match: m[0], index: m.index, groups: m.slice(1) });
+    }
+    if (matches.length === 0) {
+      r.innerHTML = '<span class="status status-warn">⚠️ No match</span>';
+      return;
+    }
+    let html = `<span class="status status-ok">✅ ${matches.length} matches</span>`;
+    // 하이라이트
+    let highlighted = input;
+    for (let i = matches.length - 1; i >= 0; i--) {
+      const mc = matches[i];
+      highlighted = highlighted.slice(0, mc.index) + '<span class="match-hl">' + escHtml(mc.match) + '</span>' + highlighted.slice(mc.index + mc.match.length);
+    }
+    html += `<div class="output" style="margin:12px 0;white-space:pre-wrap;">${highlighted}</div>`;
+    html += '<div style="font-size:0.85em;">';
+    matches.forEach((mc, i) => {
+      html += `<div style="margin:4px 0;"><strong>#${i+1}</strong> "${escHtml(mc.match)}" <span style="color:var(--text2)">@ index ${mc.index}</span>`;
+      if (mc.groups.length) {
+        mc.groups.forEach((g, j) => { html += `<br>&nbsp;&nbsp;Group ${j+1}: <span class="match-group">${escHtml(g||'')}</span>`; });
+      }
+      html += '</div>';
+    });
+    html += '</div>';
+    r.innerHTML = html;
+  } catch (e) { r.innerHTML = '<span class="status status-err">❌ ' + e.message + '</span>'; }
+}
+function escHtml(s) { return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+// ===== 색상 =====
+const colorPicker = document.getElementById('color-picker');
+colorPicker.addEventListener('input', () => {
+  document.getElementById('color-input').value = colorPicker.value;
+  colorConvert();
+});
+document.getElementById('color-input').addEventListener('keydown', e => { if (e.key==='Enter') colorConvert(); });
+
+function colorConvert() {
+  const input = document.getElementById('color-input').value.trim();
+  if (!input) return;
+  let r, g, b;
+  // HEX
+  const hexMatch = input.match(/^#?([0-9a-f]{3,8})$/i);
+  if (hexMatch) {
+    let h = hexMatch[1];
+    if (h.length === 3) h = h[0]+h[0]+h[1]+h[1]+h[2]+h[2];
+    r = parseInt(h.substr(0,2),16); g = parseInt(h.substr(2,2),16); b = parseInt(h.substr(4,2),16);
+  }
+  // RGB
+  const rgbMatch = input.match(/rgb[a]?\((\d+),?\s*(\d+),?\s*(\d+)/i);
+  if (rgbMatch) { r = +rgbMatch[1]; g = +rgbMatch[2]; b = +rgbMatch[3]; }
+  // HSL
+  const hslMatch = input.match(/hsl[a]?\((\d+),?\s*(\d+)%?,?\s*(\d+)%?/i);
+  if (hslMatch) {
+    const rgb = hslToRgb(+hslMatch[1], +hslMatch[2], +hslMatch[3]);
+    r = rgb[0]; g = rgb[1]; b = rgb[2];
+  }
+  if (r === undefined) return;
+
+  const hex = '#' + [r,g,b].map(x => x.toString(16).padStart(2,'0')).join('');
+  const hsl = rgbToHsl(r, g, b);
+  document.getElementById('color-preview').style.background = hex;
+  document.getElementById('color-hex').value = hex;
+  document.getElementById('color-rgb').value = `rgb(${r}, ${g}, ${b})`;
+  document.getElementById('color-hsl').value = `hsl(${hsl[0]}, ${hsl[1]}%, ${hsl[2]}%)`;
+  document.getElementById('color-css').value = `--color: ${hex};`;
+  colorPicker.value = hex;
+
+  // 클릭으로 복사
+  ['color-hex','color-rgb','color-hsl','color-css'].forEach(id => {
+    document.getElementById(id).onclick = () => { navigator.clipboard.writeText(document.getElementById(id).value); toast('📋 Copied'); };
+  });
+}
+function rgbToHsl(r,g,b) {
+  r/=255;g/=255;b/=255;
+  const max=Math.max(r,g,b),min=Math.min(r,g,b),l=(max+min)/2;
+  let h,s;
+  if(max===min){h=s=0;}else{
+    const d=max-min;s=l>0.5?d/(2-max-min):d/(max+min);
+    switch(max){case r:h=((g-b)/d+(g<b?6:0))/6;break;case g:h=((b-r)/d+2)/6;break;case b:h=((r-g)/d+4)/6;break;}
+  }
+  return [Math.round(h*360),Math.round(s*100),Math.round(l*100)];
+}
+function hslToRgb(h,s,l) {
+  h/=360;s/=100;l/=100;
+  let r,g,b;
+  if(s===0){r=g=b=l;}else{
+    const q=l<0.5?l*(1+s):l+s-l*s,p=2*l-q;
+    r=hue2rgb(p,q,h+1/3);g=hue2rgb(p,q,h);b=hue2rgb(p,q,h-1/3);
+  }
+  return [Math.round(r*255),Math.round(g*255),Math.round(b*255)];
+}
+function hue2rgb(p,q,t){if(t<0)t+=1;if(t>1)t-=1;if(t<1/6)return p+(q-p)*6*t;if(t<1/2)return q;if(t<2/3)return p+(q-p)*(2/3-t)*6;return p;}
+
+// ===== Hash (Web Crypto API) =====
+async function hashGenerate() {
+  const input = document.getElementById('hash-input').value;
+  const r = document.getElementById('hash-result');
+  if (!input) return;
+  r.style.display = 'block';
+  const enc = new TextEncoder().encode(input);
+  const algos = ['SHA-1', 'SHA-256', 'SHA-384', 'SHA-512'];
+  let html = '';
+  for (const algo of algos) {
+    const buf = await crypto.subtle.digest(algo, enc);
+    const hex = Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
+    html += `<div class="hash-result-row"><span class="lbl">${algo}</span><code>${hex}</code><button class="btn-ghost" style="padding:4px 8px;font-size:0.75em;" onclick="navigator.clipboard.writeText('${hex}');toast('📋 Copied')">📋</button></div>`;
+  }
+  r.innerHTML = html;
+}
+
+// ===== Diff =====
+function diffCompare() {
+  const a = document.getElementById('diff-a').value.split('\n');
+  const b = document.getElementById('diff-b').value.split('\n');
+  const r = document.getElementById('diff-result');
+  r.style.display = 'block';
+  const maxLen = Math.max(a.length, b.length);
+  let html = '', changes = 0;
+  for (let i = 0; i < maxLen; i++) {
+    const la = a[i] !== undefined ? a[i] : null;
+    const lb = b[i] !== undefined ? b[i] : null;
+    const ln = String(i + 1).padStart(3, ' ');
+    if (la === lb) {
+      html += `<span style="color:var(--text2)">${ln}  ${escHtml(la || '')}\n</span>`;
+    } else {
+      changes++;
+      if (la !== null) html += `<span style="color:var(--error)">${ln} -${escHtml(la)}\n</span>`;
+      if (lb !== null) html += `<span style="color:var(--success)">${ln} +${escHtml(lb)}\n</span>`;
+    }
+  }
+  r.innerHTML = `<span class="status ${changes?'status-warn':'status-ok'}">${changes ? changes + ' lines differ' : '✅ Identical'}</span>\n\n` + html;
+}
+
+// ===== Lorem =====
+const LOREM_EN = ["Lorem ipsum dolor sit amet, consectetur adipiscing elit.","Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.","Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris.","Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore.","Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit.","Nulla facilisi morbi tempus iaculis urna id volutpat lacus.","Viverra accumsan in nisl nisi scelerisque eu ultrices vitae.","Amet consectetur adipiscing elit pellentesque habitant morbi tristique.","Eget arcu dictum varius duis at consectetur lorem donec.","Turpis egestas integer eget aliquet nibh praesent tristique magna.","Pellentesque habitant morbi tristique senectus et netus et malesuada.","Faucibus interdum posuere lorem ipsum dolor sit amet consectetur."];
+const LOREM_KO = ["다람쥐 헌 쳇바퀴에 타고파.","키스의 고유 조건은 입술끼리 , 만, 났을 때이다.","정 , 참 외길 , , , 무늬가 , 있다.","그는 , 빛나는 , 해를 바라보며 걸어갔다.","오래된 , 서울 , 도시의 풍경이 눈앞에 펼쳐진다.","개발자는 , 커피와 , 함께 새벽까지 코드를 작성한다.","빠르게 변하는 기술 세계에서 학습은 멈출 수 없다.","인공지능이 만드는 미래는 상상 이상으로 빠르게 다가온다.","작은 아이디어 하나가 세상을 바꿀 수 있다.","끊임없는 도전이 성공의 비결이다.","맑은 하늘 아래 펼쳐진 들판을 걸으며 생각에 잠긴다.","새로운 시작은 언제나 설레는 법이다."];
+
+function loremGenerate() {
+  const type = document.getElementById('lorem-type').value;
+  const count = Math.min(100, Math.max(1, +document.getElementById('lorem-count').value || 3));
+  const lang = document.getElementById('lorem-lang').value;
+  const src = lang === 'ko' ? LOREM_KO : LOREM_EN;
+  let result = '';
+  if (type === 'words') {
+    const words = src.join(' ').replace(/[.,]/g, '').split(/\s+/);
+    const out = [];
+    for (let i = 0; i < count; i++) out.push(words[i % words.length]);
+    result = out.join(' ');
+  } else if (type === 'sentences') {
+    const out = [];
+    for (let i = 0; i < count; i++) out.push(src[i % src.length]);
+    result = out.join(' ');
+  } else {
+    const paras = [];
+    for (let i = 0; i < count; i++) {
+      const sentences = [];
+      for (let j = 0; j < 4; j++) sentences.push(src[(i * 4 + j) % src.length]);
+      paras.push(sentences.join(' '));
+    }
+    result = paras.join('\n\n');
+  }
+  document.getElementById('lorem-output').value = result;
+}
+
+// ===== HTTP 요청 =====
+document.getElementById('http-url').addEventListener('keydown', e => { if (e.key==='Enter') httpSend(); });
+
+async function httpSend() {
+  const url = document.getElementById('http-url').value.trim();
+  if (!url) return;
+  const method = document.getElementById('http-method').value;
+  const btn = document.getElementById('http-send-btn');
+  const bar = document.getElementById('http-status-bar');
+  const resp = document.getElementById('http-response');
+
+  let headers = {};
+  try {
+    const h = document.getElementById('http-headers').value.trim();
+    if (h) headers = JSON.parse(h);
+  } catch { bar.innerHTML = '<span class="status status-err">❌ Headers must be valid JSON</span>'; bar.style.display='block'; return; }
+
+  const body = document.getElementById('http-body').value.trim() || null;
+
+  btn.textContent = '⏳ Sending...';
+  btn.disabled = true;
+  bar.innerHTML = '<span class="status status-info">⏳ Requesting...</span>';
+  bar.style.display = 'block';
+
+  try {
+    const res = await fetch('/api/request', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ url, method, headers, body, insecure: document.getElementById('http-insecure').checked }),
+    });
+    const data = await res.json();
+
+    if (data.error && !data.status) {
+      bar.innerHTML = `<span class="status status-err">❌ ${data.error}</span>`;
+      resp.style.display = 'none';
+      return;
+    }
+
+    const statusClass = data.status >= 200 && data.status < 300 ? 'status-ok' : data.status >= 400 ? 'status-err' : 'status-warn';
+    const sizeStr = data.size > 1024 ? (data.size/1024).toFixed(1) + ' KB' : data.size + ' B';
+    bar.innerHTML = `<span class="status ${statusClass}">${data.status} ${data.statusText}</span> <span style="color:var(--text2);font-size:0.8em;margin-left:8px;">⏱ ${data.time}ms · 📦 ${sizeStr}</span>`;
+
+    // Body
+    let bodyText = data.body || '';
+    try { bodyText = JSON.stringify(JSON.parse(bodyText), null, 2); } catch {}
+    document.getElementById('http-resp-body-text').value = bodyText;
+
+    // Headers
+    let headersHtml = '';
+    for (const [k, v] of Object.entries(data.headers || {})) {
+      headersHtml += `<div><span style="color:var(--accent)">${escHtml(k)}</span>: ${escHtml(v)}</div>`;
+    }
+    document.getElementById('http-resp-headers').innerHTML = headersHtml;
+
+    resp.style.display = 'block';
+  } catch (e) {
+    bar.innerHTML = `<span class="status status-err">❌ ${e.message}</span>`;
+  } finally {
+    btn.textContent = '🚀 Send';
+    btn.disabled = false;
+  }
+}
+
+function httpTab(el, showId) {
+  const tabs = el.parentElement.querySelectorAll('.tab');
+  tabs.forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('http-resp-body').style.display = showId === 'http-resp-body' ? '' : 'none';
+  document.getElementById('http-resp-headers').style.display = showId === 'http-resp-headers' ? '' : 'none';
+}
+
+// ===== 리다이렉트 추적 =====
+document.getElementById('redir-url').addEventListener('keydown', e => { if (e.key==='Enter') redirectTrace(); });
+
+async function redirectTrace() {
+  const url = document.getElementById('redir-url').value.trim();
+  if (!url) return;
+  const btn = document.getElementById('redir-btn');
+  const r = document.getElementById('redir-result');
+
+  btn.textContent = '⏳ Tracing...';
+  btn.disabled = true;
+  r.style.display = 'block';
+  r.innerHTML = '<span class="status status-info">⏳ Tracing redirects...</span>';
+
+  try {
+    const res = await fetch('/api/redirect-trace', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ url, insecure: document.getElementById('redir-insecure').checked }),
+    });
+    const data = await res.json();
+
+    if (data.error) {
+      r.innerHTML = `<span class="status status-err">❌ ${data.error}</span>`;
+      return;
+    }
+
+    let html = `<div style="margin-bottom:12px;">
+      <span class="status status-info">🔀 ${data.totalHops} hops · ⏱ ${data.totalTime}ms</span>
+    </div>`;
+
+    html += '<div style="position:relative;padding-left:30px;">';
+    data.hops.forEach((hop, i) => {
+      const isLast = hop.final || i === data.hops.length - 1;
+      const statusClass = hop.status >= 200 && hop.status < 300 ? 'status-ok'
+        : hop.status >= 300 && hop.status < 400 ? 'status-warn'
+        : hop.status >= 400 ? 'status-err' : 'status-err';
+
+      // 타임라인 라인
+      const lineStyle = isLast ? '' : 'border-left: 2px solid var(--border);';
+      html += `<div style="position:relative;padding-bottom:${isLast?'0':'20'}px;margin-left:0;${lineStyle}padding-left:20px;">`;
+
+      // 원형 마커
+      const dotColor = hop.status >= 200 && hop.status < 300 ? 'var(--success)'
+        : hop.status >= 300 && hop.status < 400 ? 'var(--warn)' : 'var(--error)';
+      html += `<div style="position:absolute;left:-7px;top:2px;width:14px;height:14px;border-radius:50%;background:${dotColor};border:2px solid var(--bg);"></div>`;
+
+      html += `<div style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:12px;">`;
+      html += `<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">`;
+      html += `<span style="font-weight:600;color:var(--text2);font-size:0.8em;">#${hop.step || i+1}</span>`;
+      html += `<span class="status ${statusClass}">${hop.status} ${hop.statusText}</span>`;
+      html += `<span style="color:var(--text2);font-size:0.8em;">⏱ ${hop.time}ms</span>`;
+      html += `</div>`;
+      html += `<div style="margin-top:6px;font-family:var(--mono);font-size:0.8em;word-break:break-all;color:var(--text);">${escHtml(hop.url)}</div>`;
+
+      if (hop.location) {
+        html += `<div style="margin-top:4px;font-size:0.8em;color:var(--text2);">→ ${escHtml(hop.location)}</div>`;
+      }
+
+      // 주요 헤더 표시
+      if (hop.headers) {
+        const interestingHeaders = ['Server', 'Content-Type', 'X-Powered-By', 'Set-Cookie', 'Cache-Control'];
+        const found = [];
+        for (const h of interestingHeaders) {
+          const val = hop.headers[h] || hop.headers[h.toLowerCase()];
+          if (val) found.push(`<span style="color:var(--accent)">${h}</span>: ${escHtml(String(val).substring(0, 100))}`);
+        }
+        if (found.length) {
+          html += `<div style="margin-top:6px;font-size:0.75em;color:var(--text2);line-height:1.8;">${found.join('<br>')}</div>`;
+        }
+      }
+
+      html += '</div></div>';
+    });
+    html += '</div>';
+
+    // 최종 URL
+    html += `<div style="margin-top:16px;padding:12px;background:var(--surface);border:1px solid var(--border);border-radius:8px;">`;
+    html += `<div style="font-size:0.8em;color:var(--text2);margin-bottom:4px;">📍 Final URL</div>`;
+    html += `<div style="font-family:var(--mono);font-size:0.85em;word-break:break-all;">${escHtml(data.finalUrl)}</div>`;
+    html += `<button class="btn-ghost" style="margin-top:8px;font-size:0.75em;" onclick="navigator.clipboard.writeText('${data.finalUrl.replace(/'/g,"\\'")}');toast('📋 Copied')">📋 Copy final URL</button>`;
+    html += '</div>';
+
+    r.innerHTML = html;
+  } catch (e) {
+    r.innerHTML = `<span class="status status-err">❌ ${e.message}</span>`;
+  } finally {
+    btn.textContent = '🔀 Trace';
+    btn.disabled = false;
+  }
+}
+
+// ===== SQL 포맷터 =====
+const SQL_KEYWORDS = ['SELECT','FROM','WHERE','AND','OR','NOT','IN','ON','AS','JOIN','LEFT','RIGHT','INNER','OUTER','FULL','CROSS','NATURAL','UNION','ALL','INSERT','INTO','VALUES','UPDATE','SET','DELETE','CREATE','TABLE','ALTER','DROP','INDEX','VIEW','TRIGGER','PROCEDURE','FUNCTION','IF','ELSE','THEN','END','CASE','WHEN','EXISTS','BETWEEN','LIKE','IS','NULL','TRUE','FALSE','ORDER','BY','GROUP','HAVING','LIMIT','OFFSET','ASC','DESC','DISTINCT','COUNT','SUM','AVG','MIN','MAX','COALESCE','CAST','CONVERT','WITH','RECURSIVE','OVER','PARTITION','ROW_NUMBER','RANK','DENSE_RANK','FETCH','NEXT','ROWS','ONLY','EXCEPT','INTERSECT','FOREIGN','KEY','PRIMARY','REFERENCES','CONSTRAINT','DEFAULT','CHECK','UNIQUE','AUTO_INCREMENT','SERIAL','CASCADE','RESTRICT','TRUNCATE','EXPLAIN','ANALYZE','BEGIN','COMMIT','ROLLBACK','GRANT','REVOKE'];
+const SQL_MAJOR = ['SELECT','FROM','WHERE','JOIN','LEFT JOIN','RIGHT JOIN','INNER JOIN','OUTER JOIN','FULL JOIN','CROSS JOIN','ORDER BY','GROUP BY','HAVING','LIMIT','OFFSET','UNION','UNION ALL','INSERT INTO','VALUES','UPDATE','SET','DELETE FROM','CREATE TABLE','ALTER TABLE','DROP TABLE','WITH','ON','AND','OR','EXCEPT','INTERSECT'];
+
+function sqlFormat() {
+  let sql = document.getElementById('sql-input').value.trim();
+  if (!sql) return;
+
+  // 키워드 대문자로 통일
+  sql = sqlKeywordCase(sql, true);
+
+  // 주요 키워드 앞에 줄바꿈 + 들여쓰기
+  const majorSorted = SQL_MAJOR.slice().sort((a,b) => b.length - a.length);
+  for (const kw of majorSorted) {
+    const re = new RegExp('\\b' + kw.replace(/ /g, '\\s+') + '\\b', 'gi');
+    sql = sql.replace(re, '\n' + kw);
+  }
+
+  // SELECT 컬럼 쉼표 뒤 줄바꿈
+  const lines = sql.split('\n');
+  const formatted = [];
+  for (let line of lines) {
+    line = line.trim();
+    if (!line) continue;
+    if (/^SELECT\b/i.test(line)) {
+      // SELECT 뒤 컬럼들 분리
+      const selectPart = line.replace(/^SELECT\s+/i, '');
+      const cols = splitOutsideParens(selectPart, ',');
+      if (cols.length > 1) {
+        formatted.push('SELECT');
+        cols.forEach((col, i) => {
+          formatted.push('  ' + col.trim() + (i < cols.length - 1 ? ',' : ''));
+        });
+        continue;
+      }
+    }
+    // 들여쓰기
+    if (/^(AND|OR)\b/i.test(line)) {
+      formatted.push('  ' + line);
+    } else {
+      formatted.push(line);
+    }
+  }
+  document.getElementById('sql-output').value = formatted.join('\n').replace(/^\n+/, '');
+}
+
+function splitOutsideParens(str, sep) {
+  const result = []; let depth = 0; let current = '';
+  for (const ch of str) {
+    if (ch === '(') depth++;
+    else if (ch === ')') depth--;
+    if (ch === sep && depth === 0) { result.push(current); current = ''; }
+    else current += ch;
+  }
+  if (current) result.push(current);
+  return result;
+}
+
+function sqlMinify() {
+  const sql = document.getElementById('sql-input').value.trim();
+  if (!sql) return;
+  document.getElementById('sql-output').value = sql.replace(/\s+/g, ' ').replace(/\s*([,;()])\s*/g, '$1 ').trim();
+}
+
+function sqlKeywordCase(sql, upper) {
+  for (const kw of SQL_KEYWORDS) {
+    const re = new RegExp('\\b' + kw + '\\b', 'gi');
+    sql = sql.replace(re, upper ? kw.toUpperCase() : kw.toLowerCase());
+  }
+  return sql;
+}
+function sqlUpper() {
+  const sql = document.getElementById('sql-input').value.trim();
+  if (!sql) return;
+  document.getElementById('sql-output').value = sqlKeywordCase(sql, true);
+}
+function sqlLower() {
+  const sql = document.getElementById('sql-input').value.trim();
+  if (!sql) return;
+  document.getElementById('sql-output').value = sqlKeywordCase(sql, false);
+}
+
+// ===== 이스케이프 =====
+function escHtmlEnc() {
+  const v = document.getElementById('esc-input').value;
+  document.getElementById('esc-output').value = v
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+}
+function escHtmlDec() {
+  const v = document.getElementById('esc-input').value;
+  const el = document.createElement('textarea');
+  el.innerHTML = v;
+  document.getElementById('esc-output').value = el.value;
+}
+function escUnicodeEnc() {
+  const v = document.getElementById('esc-input').value;
+  document.getElementById('esc-output').value = Array.from(v).map(c => {
+    const code = c.codePointAt(0);
+    return code > 127 ? '\\u' + code.toString(16).padStart(4, '0') : c;
+  }).join('');
+}
+function escUnicodeDec() {
+  const v = document.getElementById('esc-input').value;
+  try {
+    document.getElementById('esc-output').value = v.replace(/\\u([0-9a-fA-F]{4,6})/g, (_, hex) => String.fromCodePoint(parseInt(hex, 16)));
+  } catch (e) { document.getElementById('esc-output').value = '❌ ' + e.message; }
+}
+function escSlashEnc() {
+  const v = document.getElementById('esc-input').value;
+  document.getElementById('esc-output').value = JSON.stringify(v);
+}
+function escSlashDec() {
+  const v = document.getElementById('esc-input').value;
+  try {
+    document.getElementById('esc-output').value = JSON.parse(v);
+  } catch {
+    // 따옴표 없으면 감싸서 시도
+    try { document.getElementById('esc-output').value = JSON.parse('"' + v + '"'); }
+    catch (e) { document.getElementById('esc-output').value = '❌ ' + e.message; }
+  }
+}
+
+// ===== 퍼센트 계산기 =====
+function pcCalc1() {
+  const total = parseFloat(document.getElementById('pc1-total').value);
+  const rate = parseFloat(document.getElementById('pc1-rate').value);
+  if (isNaN(total) || isNaN(rate)) return;
+  const result = total * rate / 100;
+  document.getElementById('pc1-result').textContent = `= ${fmtNum(result)}`;
+  document.getElementById('pc1-result').style.color = 'var(--success)';
+}
+function pcCalc2() {
+  const total = parseFloat(document.getElementById('pc2-total').value);
+  const part = parseFloat(document.getElementById('pc2-part').value);
+  if (isNaN(total) || isNaN(part) || total === 0) return;
+  const result = (part / total) * 100;
+  document.getElementById('pc2-result').textContent = `= ${fmtNum(result)}%`;
+  document.getElementById('pc2-result').style.color = 'var(--success)';
+}
+function pcCalc3() {
+  const from = parseFloat(document.getElementById('pc3-from').value);
+  const to = parseFloat(document.getElementById('pc3-to').value);
+  if (isNaN(from) || isNaN(to) || from === 0) return;
+  const change = ((to - from) / from) * 100;
+  const label = change >= 0 ? `📈 ${fmtNum(change)}% increase` : `📉 ${fmtNum(Math.abs(change))}% decrease`;
+  document.getElementById('pc3-result').textContent = label;
+  document.getElementById('pc3-result').style.color = change >= 0 ? 'var(--success)' : 'var(--error)';
+}
+function pcCalc4() {
+  const total = parseFloat(document.getElementById('pc4-total').value);
+  const rate = parseFloat(document.getElementById('pc4-rate').value);
+  if (isNaN(total) || isNaN(rate)) return;
+  const result = total * (1 + rate / 100);
+  const diff = result - total;
+  document.getElementById('pc4-result').textContent = `= ${fmtNum(result)} (${diff >= 0 ? '+' : ''}${fmtNum(diff)})`;
+  document.getElementById('pc4-result').style.color = 'var(--success)';
+}
+function pcCalc5() {
+  const original = parseFloat(document.getElementById('pc5-original').value);
+  const discount = parseFloat(document.getElementById('pc5-discount').value);
+  if (isNaN(original) || isNaN(discount)) return;
+  const discountAmt = original * discount / 100;
+  const result = original - discountAmt;
+  document.getElementById('pc5-result').textContent = `= ${fmtNum(result)} (saved: ${fmtNum(discountAmt)})`;
+  document.getElementById('pc5-result').style.color = 'var(--success)';
+}
+function fmtNum(n) {
+  // 소수점 11자리까지, 불필요한 0 제거
+  const s = parseFloat(n.toFixed(11));
+  return s.toLocaleString('ko-KR', { maximumFractionDigits: 11 });
+}
+function pcReset() {
+  ['pc1-total','pc1-rate','pc2-total','pc2-part','pc3-from','pc3-to','pc4-total','pc4-rate','pc5-original','pc5-discount'].forEach(id => document.getElementById(id).value = '');
+  ['pc1-result','pc2-result','pc3-result','pc4-result','pc5-result'].forEach(id => document.getElementById(id).textContent = '');
+}
+
+// Enter 키로 퍼센트 계산
+document.querySelectorAll('[id^="pc"]').forEach(el => {
+  if (el.tagName === 'INPUT') {
+    el.addEventListener('keydown', e => {
+      if (e.key !== 'Enter') return;
+      const id = el.id;
+      if (id.startsWith('pc1')) pcCalc1();
+      else if (id.startsWith('pc2')) pcCalc2();
+      else if (id.startsWith('pc3')) pcCalc3();
+      else if (id.startsWith('pc4')) pcCalc4();
+      else if (id.startsWith('pc5')) pcCalc5();
+    });
+  }
+});
+
+// 초기 색상
+colorConvert();
+</script>
+</body>
+</html>

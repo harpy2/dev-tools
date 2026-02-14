@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url><loc>https://tools.salmonholic.com/</loc><priority>1.0</priority><changefreq>weekly</changefreq></url>
+  <url><loc>https://tools.salmonholic.com/#json</loc><priority>0.9</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://tools.salmonholic.com/#timestamp</loc><priority>0.9</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://tools.salmonholic.com/#url</loc><priority>0.9</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://tools.salmonholic.com/#base64</loc><priority>0.8</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://tools.salmonholic.com/#jwt</loc><priority>0.8</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://tools.salmonholic.com/#sql</loc><priority>0.8</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://tools.salmonholic.com/#regex</loc><priority>0.8</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://tools.salmonholic.com/#color</loc><priority>0.7</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://tools.salmonholic.com/#hash</loc><priority>0.7</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://tools.salmonholic.com/#escape</loc><priority>0.7</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://tools.salmonholic.com/#http</loc><priority>0.7</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://tools.salmonholic.com/#redirect</loc><priority>0.7</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://tools.salmonholic.com/#percent</loc><priority>0.6</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://tools.salmonholic.com/#diff</loc><priority>0.6</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://tools.salmonholic.com/#lorem</loc><priority>0.5</priority><changefreq>monthly</changefreq></url>
+</urlset>
