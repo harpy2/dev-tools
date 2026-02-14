@@ -802,6 +802,9 @@ gtag('config', 'G-JH96TVTP96');
 <div class="toast" id="toast">💾 Saved</div>
 
 <script>
+// API base URL — Cloudflare Worker (fallback to local /api)
+const API_BASE = 'https://salmon-tools-api.harpy2.workers.dev';
+
 // 모바일 감지는 CSS에서 처리 (미디어쿼리)
 
 // ===== 탭 전환 =====
@@ -815,7 +818,7 @@ function switchTab(tabName) {
   // URL 해시 업데이트 (뒤로가기 지원)
   if (history.replaceState) history.replaceState(null, '', '#' + tabName);
   // 페이지 타이틀 업데이트 (SEO + 탭 구분)
-  const titles = {memo:'Memo',json:'JSON Formatter',sql:'SQL Formatter',timestamp:'Timestamp Converter',url:'URL Encoder/Decoder',base64:'Base64 Encoder/Decoder',escape:'Escape/Unescape',jwt:'JWT Decoder',hash:'Hash Generator',http:'HTTP Client',redirect:'Redirect Tracer',color:'Color Converter',regex:'Regex Tester',percent:'Percent Calculator',diff:'Text Diff',lorem:'Lorem Generator'};
+  const titles = {memo:'Memo',json:'JSON Formatter',sql:'SQL Formatter',timestamp:'Timestamp Converter',url:'URL Encoder/Decoder',base64:'Base64 Encoder/Decoder',escape:'Escape/Unescape',jwt:'JWT Decoder',hash:'Hash Generator',http:'HTTP Client',redirect:'Redirect Tracer',color:'Color Converter',regex:'Regex Tester',percent:'Percent Calculator',diff:'Text Diff',lorem:'Lorem Generator',uuid:'UUID / GAID / IDFA Generator'};
   document.title = (titles[tabName] || 'Salmon Tools') + ' — Salmon Tools';
 }
 
@@ -1247,7 +1250,7 @@ async function httpSend() {
   bar.style.display = 'block';
 
   try {
-    const res = await fetch('/api/request', {
+    const res = await fetch(API_BASE + '/api/request', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ url, method, headers, body, insecure: document.getElementById('http-insecure').checked }),
@@ -1308,7 +1311,7 @@ async function redirectTrace() {
   r.innerHTML = '<span class="status status-info">⏳ Tracing redirects...</span>';
 
   try {
-    const res = await fetch('/api/redirect-trace', {
+    const res = await fetch(API_BASE + '/api/redirect-trace', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ url, insecure: document.getElementById('redir-insecure').checked }),
