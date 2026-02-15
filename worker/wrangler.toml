@@ -1,3 +1,7 @@
 name = "salmon-tools-api"
 main = "worker.js"
 compatibility_date = "2024-01-01"
+
+[[kv_namespaces]]
+binding = "SCORES"
+id = "7d39329d757e40b3b5af3943e5e5fcc9"

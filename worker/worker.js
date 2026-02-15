@@ -205,7 +205,7 @@ function handleSkillCheckOG(params) {
 }
 
 export default {
-  async fetch(request) {
+  async fetch(request, env) {
     if (request.method === 'OPTIONS') {
       return new Response(null, { status: 204, headers: CORS_HEADERS });
     }
@@ -229,6 +229,73 @@ export default {
       return handleSkillCheckOG(url.searchParams);
     }
 
+    // Score submission
+    if (request.method === 'POST' && url.pathname === '/api/skillcheck/score') {
+      const params = await request.json();
+      return handleScoreSubmit(params, env);
+    }
+
     return jsonResponse({ error: 'Not found' }, 404);
   },
 };
+
+// ===== Score System =====
+const SCORE_SECRET = 'sk_salmon_2026_xK9mP'; // 서명 검증용
+
+async function hmacSign(data) {
+  const key = await crypto.subtle.importKey(
+    'raw', new TextEncoder().encode(SCORE_SECRET),
+    { name: 'HMAC', hash: 'SHA-256' }, false, ['sign']
+  );
+  const sig = await crypto.subtle.sign('HMAC', key, new TextEncoder().encode(data));
+  return Array.from(new Uint8Array(sig)).map(b => b.toString(16).padStart(2, '0')).join('');
+}
+
+async function handleScoreSubmit(params, env) {
+  const { score, round, greats, goods, misses, maxCombo, token, ts } = params;
+
+  // 기본 검증
+  if (!score || !round || !token || !ts) return jsonResponse({ error: 'Missing fields' }, 400);
+  if (typeof score !== 'number' || score < 0 || score > 999999) return jsonResponse({ error: 'Invalid score' }, 400);
+  if (typeof round !== 'number' || round < 1 || round > 9999) return jsonResponse({ error: 'Invalid round' }, 400);
+
+  // 시간 검증 (5분 이내)
+  const now = Date.now();
+  if (Math.abs(now - ts) > 300000) return jsonResponse({ error: 'Expired' }, 400);
+
+  // HMAC 검증
+  const payload = `${score}:${round}:${greats}:${goods}:${misses}:${maxCombo}:${ts}`;
+  const expected = await hmacSign(payload);
+  if (token !== expected) return jsonResponse({ error: 'Invalid token' }, 403);
+
+  // 점수 합산 검증 (대략적)
+  const totalRounds = (greats || 0) + (goods || 0) + (misses || 0);
+  if (totalRounds !== round) return jsonResponse({ error: 'Mismatch' }, 400);
+  if ((misses || 0) > 3) return jsonResponse({ error: 'Invalid misses' }, 400);
+
+  // KV에 점수 저장 — 버킷 시스템으로 퍼센타일 계산
+  // scores:distribution — JSON { "buckets": { "0": count, "1000": count, ... } , "total": N }
+  const distKey = 'scores:distribution';
+  let dist = await env.SCORES.get(distKey, { type: 'json' }) || { buckets: {}, total: 0 };
+
+  // 1000점 단위 버킷
+  const bucket = Math.floor(score / 1000) * 1000;
+  dist.buckets[bucket] = (dist.buckets[bucket] || 0) + 1;
+  dist.total += 1;
+
+  await env.SCORES.put(distKey, JSON.stringify(dist));
+
+  // 퍼센타일 계산 (이 점수보다 낮은 사람의 비율)
+  let below = 0;
+  for (const [b, count] of Object.entries(dist.buckets)) {
+    if (parseInt(b) < bucket) below += count;
+    else if (parseInt(b) === bucket) below += Math.floor(count / 2); // 같은 버킷은 절반
+  }
+  const percentile = Math.max(1, Math.round((1 - below / dist.total) * 100));
+
+  return jsonResponse({
+    percentile,
+    totalPlayers: dist.total,
+    rank: `Top ${percentile}%`,
+  });
+}
