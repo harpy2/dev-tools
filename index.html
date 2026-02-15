@@ -352,7 +352,7 @@ gtag('config', 'G-JH96TVTP96');
 
 <nav class="sidebar">
   <div class="sidebar-header">
-    <h1>🛠 Salmon Tools</h1>
+    <h1 style="cursor:pointer;" onclick="goHome()">🛠 Salmon Tools</h1>
   </div>
   <div class="sidebar-nav">
     <div class="nav-group">
@@ -863,7 +863,7 @@ function switchTab(tabName) {
   const panel = document.getElementById('panel-' + tabName);
   if (panel) panel.classList.add('active');
   const intro = document.getElementById('intro-section');
-  if (intro) intro.style.display = 'none';
+  if (intro && tabName !== 'home') intro.style.display = 'none';
   localStorage.setItem('devtools-tab', tabName);
   // URL 해시 업데이트 (뒤로가기 지원)
   if (history.replaceState) history.replaceState(null, '', '#' + tabName);
@@ -1685,6 +1685,17 @@ document.querySelectorAll('[id^="pc"]').forEach(el => {
     });
   }
 });
+
+// 홈으로 가기
+function goHome() {
+  document.querySelectorAll('.sidebar .tab, .mobile-tabs .tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  const intro = document.getElementById('intro-section');
+  if (intro) intro.style.display = '';
+  localStorage.removeItem('devtools-tab');
+  if (history.replaceState) history.replaceState(null, '', '/');
+  document.title = 'Salmon Tools — Free Online Developer Toolkit';
+}
 
 // 초기 색상
 colorConvert();
