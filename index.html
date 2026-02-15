@@ -395,6 +395,36 @@ gtag('config', 'G-JH96TVTP96');
 
 <div class="content">
 
+  <!-- SEO: 소개 섹션 (검색엔진이 볼 수 있는 정적 콘텐츠) -->
+  <div id="intro-section" style="max-width:900px;margin:0 auto 24px;padding:20px;background:var(--surface);border:1px solid var(--border);border-radius:12px;line-height:1.8;">
+    <h2 style="font-size:1.3em;margin-bottom:12px;">🛠 Salmon Tools — Free Online Developer Toolkit</h2>
+    <p style="color:var(--text2);font-size:0.9em;margin-bottom:12px;">
+      A comprehensive collection of 17+ developer tools that run entirely in your browser. No signup, no installation, no data sent to servers — everything is processed client-side for maximum privacy and speed.
+    </p>
+    <div style="display:flex;flex-wrap:wrap;gap:8px;font-size:0.8em;">
+      <span style="background:var(--bg);padding:4px 10px;border-radius:6px;color:var(--text2);">JSON Formatter & Validator</span>
+      <span style="background:var(--bg);padding:4px 10px;border-radius:6px;color:var(--text2);">SQL Formatter</span>
+      <span style="background:var(--bg);padding:4px 10px;border-radius:6px;color:var(--text2);">Timestamp Converter</span>
+      <span style="background:var(--bg);padding:4px 10px;border-radius:6px;color:var(--text2);">URL Encoder/Decoder</span>
+      <span style="background:var(--bg);padding:4px 10px;border-radius:6px;color:var(--text2);">Base64 Encoder/Decoder</span>
+      <span style="background:var(--bg);padding:4px 10px;border-radius:6px;color:var(--text2);">JWT Decoder</span>
+      <span style="background:var(--bg);padding:4px 10px;border-radius:6px;color:var(--text2);">Regex Tester</span>
+      <span style="background:var(--bg);padding:4px 10px;border-radius:6px;color:var(--text2);">Color Converter</span>
+      <span style="background:var(--bg);padding:4px 10px;border-radius:6px;color:var(--text2);">Hash Generator</span>
+      <span style="background:var(--bg);padding:4px 10px;border-radius:6px;color:var(--text2);">HTTP Client</span>
+      <span style="background:var(--bg);padding:4px 10px;border-radius:6px;color:var(--text2);">Redirect Tracer</span>
+      <span style="background:var(--bg);padding:4px 10px;border-radius:6px;color:var(--text2);">Escape/Unescape</span>
+      <span style="background:var(--bg);padding:4px 10px;border-radius:6px;color:var(--text2);">Percent Calculator</span>
+      <span style="background:var(--bg);padding:4px 10px;border-radius:6px;color:var(--text2);">UUID / GAID / IDFA Generator</span>
+      <span style="background:var(--bg);padding:4px 10px;border-radius:6px;color:var(--text2);">Text Diff</span>
+      <span style="background:var(--bg);padding:4px 10px;border-radius:6px;color:var(--text2);">Lorem Generator</span>
+      <span style="background:var(--bg);padding:4px 10px;border-radius:6px;color:var(--text2);">Memo Pad</span>
+    </div>
+    <p style="color:var(--text3);font-size:0.8em;margin-top:12px;">
+      Select a tool from the sidebar to get started. All tools support keyboard shortcuts and are optimized for both desktop and mobile.
+    </p>
+  </div>
+
   <!-- ===== 메모장 ===== -->
   <div class="panel active" id="panel-memo">
     <div class="memo-area">
@@ -408,6 +438,7 @@ gtag('config', 'G-JH96TVTP96');
 
   <!-- ===== JSON ===== -->
   <div class="panel" id="panel-json">
+    <p class="tool-desc" style="color:var(--text2);font-size:0.85em;margin-bottom:12px;">Beautify, minify, validate JSON and convert to TypeScript interfaces. Supports large JSON files with syntax error detection.</p>
     <div class="section">
       <label>JSON Input</label>
       <textarea id="json-input" placeholder='{"key": "value", "array": [1, 2, 3]}'></textarea>
@@ -426,6 +457,7 @@ gtag('config', 'G-JH96TVTP96');
 
   <!-- ===== 타임스탬프 ===== -->
   <div class="panel" id="panel-timestamp">
+    <p class="tool-desc" style="color:var(--text2);font-size:0.85em;margin-bottom:12px;">Convert Unix timestamps to human-readable dates and vice versa. Supports seconds, milliseconds, ISO 8601, and relative time display in KST/UTC.</p>
     <div class="section">
       <label>Timestamp or Date Input</label>
       <div class="row">
@@ -444,6 +476,7 @@ gtag('config', 'G-JH96TVTP96');
 
   <!-- ===== URL ===== -->
   <div class="panel" id="panel-url">
+    <p class="tool-desc" style="color:var(--text2);font-size:0.85em;margin-bottom:12px;">Encode and decode URLs, parse query parameters, and handle component-level encoding for safe URL construction.</p>
     <div class="section">
       <label>Input</label>
       <textarea id="url-input" placeholder="Enter URL or text..." style="min-height:80px;"></textarea>
@@ -461,6 +494,7 @@ gtag('config', 'G-JH96TVTP96');
 
   <!-- ===== Base64 ===== -->
   <div class="panel" id="panel-base64">
+    <p class="tool-desc" style="color:var(--text2);font-size:0.85em;margin-bottom:12px;">Encode and decode Base64 strings with full Unicode and multi-byte character support including Korean, Japanese, and Chinese.</p>
     <div class="section">
       <label>Input</label>
       <textarea id="b64-input" placeholder="Enter text or Base64 string..."></textarea>
@@ -476,6 +510,7 @@ gtag('config', 'G-JH96TVTP96');
 
   <!-- ===== JWT ===== -->
   <div class="panel" id="panel-jwt">
+    <p class="tool-desc" style="color:var(--text2);font-size:0.85em;margin-bottom:12px;">Decode JSON Web Tokens to inspect header, payload, and signature. Checks token expiry and displays claims in readable format.</p>
     <div class="section">
       <label>JWT Token Input</label>
       <textarea id="jwt-input" placeholder="eyJhbGciOiJIUzI1NiIs..." style="min-height:80px;"></textarea>
@@ -489,6 +524,7 @@ gtag('config', 'G-JH96TVTP96');
 
   <!-- ===== 정규식 ===== -->
   <div class="panel" id="panel-regex">
+    <p class="tool-desc" style="color:var(--text2);font-size:0.85em;margin-bottom:12px;">Test regular expressions with real-time match highlighting, capture group display, and support for global/case-insensitive/multiline flags.</p>
     <div class="section">
       <label>Regex Pattern</label>
       <div class="row">
@@ -528,6 +564,7 @@ gtag('config', 'G-JH96TVTP96');
 
   <!-- ===== Hash ===== -->
   <div class="panel" id="panel-hash">
+    <p class="tool-desc" style="color:var(--text2);font-size:0.85em;margin-bottom:12px;">Generate SHA-1, SHA-256, SHA-384, and SHA-512 cryptographic hashes using the Web Crypto API. All processing happens in your browser.</p>
     <div class="section">
       <label>Input Text</label>
       <textarea id="hash-input" placeholder="Enter text to hash..."></textarea>
@@ -541,6 +578,7 @@ gtag('config', 'G-JH96TVTP96');
 
   <!-- ===== HTTP 요청 ===== -->
   <div class="panel" id="panel-http">
+    <p class="tool-desc" style="color:var(--text2);font-size:0.85em;margin-bottom:12px;">Send HTTP requests (GET, POST, PUT, DELETE, PATCH) with custom headers and body. View response status, headers, and body with syntax highlighting.</p>
     <div class="section">
       <div class="row">
         <select id="http-method" style="max-width:120px;flex:none;background:var(--bg);color:var(--text);border:1px solid var(--border);border-radius:8px;padding:10px;font-size:0.85em;">
@@ -583,6 +621,7 @@ gtag('config', 'G-JH96TVTP96');
 
   <!-- ===== 리다이렉트 추적 ===== -->
   <div class="panel" id="panel-redirect">
+    <p class="tool-desc" style="color:var(--text2);font-size:0.85em;margin-bottom:12px;">Trace URL redirect chains and visualize each hop with status codes, response times, and headers. Detect infinite loops and final destinations.</p>
     <div class="section">
       <label>URL Input</label>
       <div class="row">
@@ -600,6 +639,7 @@ gtag('config', 'G-JH96TVTP96');
 
   <!-- ===== SQL 포맷터 ===== -->
   <div class="panel" id="panel-sql">
+    <p class="tool-desc" style="color:var(--text2);font-size:0.85em;margin-bottom:12px;">Format and beautify SQL queries with proper indentation, or minify them for compact storage. Supports keyword case conversion.</p>
     <div class="section">
       <label>SQL Input</label>
       <textarea id="sql-input" placeholder="SELECT * FROM users WHERE id = 1 AND status = 'active' ORDER BY created_at DESC LIMIT 10"></textarea>
@@ -758,6 +798,7 @@ gtag('config', 'G-JH96TVTP96');
 
   <!-- ===== UUID / ADID Generator ===== -->
   <div class="panel" id="panel-uuid">
+    <p class="tool-desc" style="color:var(--text2);font-size:0.85em;margin-bottom:12px;">Generate UUID v4, Google Advertising ID (GAID), and Apple IDFA identifiers. Supports bulk generation up to 100 at a time.</p>
     <div class="row" style="margin-bottom:12px;flex-wrap:wrap;gap:8px;">
       <select id="uuid-type" style="min-width:160px;">
         <option value="uuidv4">UUID v4 (Random)</option>
@@ -821,6 +862,8 @@ function switchTab(tabName) {
   document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
   const panel = document.getElementById('panel-' + tabName);
   if (panel) panel.classList.add('active');
+  const intro = document.getElementById('intro-section');
+  if (intro) intro.style.display = 'none';
   localStorage.setItem('devtools-tab', tabName);
   // URL 해시 업데이트 (뒤로가기 지원)
   if (history.replaceState) history.replaceState(null, '', '#' + tabName);
