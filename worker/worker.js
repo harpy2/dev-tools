@@ -143,6 +143,107 @@ export default {
       return handleRedirectTrace(params);
     }
 
+    // Skill Check share
+    if (url.pathname === '/share/skillcheck') {
+      return handleSkillCheckShare(url.searchParams);
+    }
+    if (url.pathname === '/share/skillcheck/og') {
+      return handleSkillCheckOG(url.searchParams);
+    }
+
     return jsonResponse({ error: 'Not found' }, 404);
   },
 };
+
+function handleSkillCheckShare(params) {
+  const score = params.get('s') || '0';
+  const grade = params.get('g') || '?';
+  const round = params.get('r') || '0';
+  const level = params.get('l') || 'EASY';
+  const accuracy = params.get('a') || '0';
+  const maxCombo = params.get('mc') || '0';
+  const greats = params.get('gr') || '0';
+  const goods = params.get('go') || '0';
+  const misses = params.get('m') || '0';
+
+  const gradeColors = { S: '#ff4466', A: '#ffd700', B: '#4ade80', C: '#60a5fa', D: '#888888' };
+  const gradeColor = gradeColors[grade] || '#888';
+  const gameUrl = `https://skillcheck.salmonholic.com/?s=${score}&g=${grade}&r=${round}&l=${level}&a=${accuracy}&mc=${maxCombo}&gr=${greats}&go=${goods}&m=${misses}`;
+
+  // Generate OG image as SVG data URI
+  const ogSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630">
+    <rect width="1200" height="630" fill="#0a0a0f"/>
+    <rect width="1200" height="6" fill="${gradeColor}"/>
+    <text x="600" y="180" text-anchor="middle" font-family="Arial,sans-serif" font-size="120" font-weight="900" fill="${gradeColor}">${grade}</text>
+    <text x="600" y="260" text-anchor="middle" font-family="Arial,sans-serif" font-size="36" fill="#eeeeee">Score: ${score}  |  Round: ${round}</text>
+    <text x="600" y="330" text-anchor="middle" font-family="Arial,sans-serif" font-size="28" fill="#888888">Level: ${level}  |  Accuracy: ${accuracy}%  |  Combo: ${maxCombo}</text>
+    <text x="600" y="400" text-anchor="middle" font-family="Arial,sans-serif" font-size="22" fill="#ffd700">Great: ${greats}  |  Good: ${goods}  |  Miss: ${misses}</text>
+    <text x="600" y="510" text-anchor="middle" font-family="Arial,sans-serif" font-size="32" fill="#ff4466">⚡ Skill Check</text>
+    <text x="600" y="560" text-anchor="middle" font-family="Arial,sans-serif" font-size="20" fill="#555555">Can you beat this score?</text>
+  </svg>`;
+  const ogImage = `data:image/svg+xml;base64,${btoa(ogSvg)}`;
+
+  const title = `⚡ Skill Check — Grade ${grade} | Score ${score}`;
+  const description = `Round ${round} | Level ${level} | Accuracy ${accuracy}% | Great ${greats} | Combo ${maxCombo} — Can you beat this score?`;
+
+  const html = `<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta property="og:title" content="${title}">
+<meta property="og:description" content="${description}">
+<meta property="og:type" content="website">
+<meta property="og:url" content="${gameUrl}">
+<meta property="og:image" content="https://salmon-tools-api.harpy922.workers.dev/share/skillcheck/og?s=${score}&g=${grade}&r=${round}&l=${level}&a=${accuracy}&mc=${maxCombo}&gr=${greats}&go=${goods}&m=${misses}">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="${title}">
+<meta name="twitter:description" content="${description}">
+<meta name="twitter:image" content="https://salmon-tools-api.harpy922.workers.dev/share/skillcheck/og?s=${score}&g=${grade}&r=${round}&l=${level}&a=${accuracy}&mc=${maxCombo}&gr=${greats}&go=${goods}&m=${misses}">
+<meta http-equiv="refresh" content="0;url=${gameUrl}">
+<title>${title}</title>
+</head>
+<body style="background:#0a0a0f;color:#eee;font-family:sans-serif;display:flex;align-items:center;justify-content:center;min-height:100vh;">
+<div style="text-align:center;">
+<h1 style="font-size:4em;color:${gradeColor};">${grade}</h1>
+<p>Score: ${score} | Round: ${round}</p>
+<p><a href="${gameUrl}" style="color:#ff4466;">Play Skill Check →</a></p>
+</div>
+</body>
+</html>`;
+
+  return new Response(html, {
+    headers: { 'Content-Type': 'text/html; charset=utf-8', ...CORS_HEADERS },
+  });
+}
+
+function handleSkillCheckOG(params) {
+  const score = params.get('s') || '0';
+  const grade = params.get('g') || '?';
+  const round = params.get('r') || '0';
+  const level = params.get('l') || 'EASY';
+  const accuracy = params.get('a') || '0';
+  const maxCombo = params.get('mc') || '0';
+  const greats = params.get('gr') || '0';
+  const goods = params.get('go') || '0';
+  const misses = params.get('m') || '0';
+
+  const gradeColors = { S: '#ff4466', A: '#ffd700', B: '#4ade80', C: '#60a5fa', D: '#888888' };
+  const gc = gradeColors[grade] || '#888';
+
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630">
+    <rect width="1200" height="630" fill="#0a0a0f"/>
+    <rect width="1200" height="6" fill="${gc}"/>
+    <text x="600" y="190" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="140" font-weight="900" fill="${gc}">${grade}</text>
+    <text x="600" y="270" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="40" font-weight="700" fill="#eeeeee">Score: ${score}</text>
+    <text x="600" y="340" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="28" fill="#999999">Round ${round}  ·  Level ${level}  ·  Accuracy ${accuracy}%</text>
+    <text x="600" y="400" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="24" fill="#ffd700">✨ Great ${greats}   👍 Good ${goods}   💨 Miss ${misses}   🔥 Combo ${maxCombo}</text>
+    <text x="600" y="510" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="36" font-weight="700" fill="#ff4466">⚡ Skill Check</text>
+    <text x="600" y="560" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="22" fill="#555555">Can you beat this score?  ·  skillcheck.salmonholic.com</text>
+  </svg>`;
+
+  return new Response(svg, {
+    headers: { 'Content-Type': 'image/svg+xml', 'Cache-Control': 'public, max-age=86400', ...CORS_HEADERS },
+  });
+}
